@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in · WishlistMarket</title>
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;700&display=swap">
+<script>
+  // Same theme as the rest of the site (Settings > Display), before first paint.
+  try {
+    const t = (JSON.parse(localStorage.getItem("wm.settings") || "{}").display || {}).theme || "system";
+    const dark = t === "dark" || (t === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+  } catch (_) {}
+</script>
+<style>
+  :root { --font:"Arimo",Arial,Helvetica,sans-serif; --bg:#fff; --card:#fff; --ink:#0f1111; --muted:#565959; --line:#d5d9d9; --field:#888c8c;
+          --btn:#ffd814; --btnLine:#fcd200; --btnInk:#0f1111; --link:#007185; --bad:#b12704; --good:#067d62; --chip:#f0f2f2;
+          --focus:#e77600; --ring:rgba(228,121,17,.5); --info:#2162a1; }
+  :root[data-theme="dark"] { --bg:#0f1418; --card:#1a2128; --ink:#e8eaed; --muted:#a7b0b8; --line:#2e3740; --field:#5b6670;
+          --link:#5cc8d9; --bad:#ff7a66; --good:#4cc29e; --chip:#232c34; --info:#7fb6ea; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.45 var(--font); }
+  a { color:var(--link); text-decoration:none; }
+  a:hover { text-decoration:underline; color:var(--bad); }
+  .page { max-width:390px; margin:0 auto; padding:14px 16px 32px; }
+  .logo { display:flex; justify-content:center; margin:6px 0 16px; color:var(--ink); }
+  .logo:hover { color:var(--ink); text-decoration:none; }
+  .logo span { position:relative; font-weight:700; font-size:28px; letter-spacing:-.5px; line-height:1; padding-bottom:9px; }
+  .logo svg { position:absolute; right:4px; bottom:0; }
+  .box { border:1px solid var(--line); border-radius:8px; padding:20px 26px 24px; background:var(--card); }
+  h1 { font-size:28px; font-weight:400; margin:0 0 14px; line-height:1.2; }
+  label { display:block; font-weight:700; font-size:13px; margin:14px 0 4px; }
+  label .opt { font-weight:400; color:var(--muted); }
+  input[type=email], input[type=password], input[type=text] { width:100%; height:34px; padding:3px 8px; font:inherit; font-size:14px; color:var(--ink);
+    background:var(--card); border:1px solid var(--field); border-top-color:#a6a6a6; border-radius:4px; box-shadow:0 1px 0 rgba(255,255,255,.5),0 1px 0 rgba(0,0,0,.07) inset; }
+  input:focus { outline:0; border-color:var(--focus); box-shadow:0 0 3px 2px var(--ring); }
+  input[aria-invalid="true"] { border-color:var(--bad); box-shadow:0 0 0 1px var(--bad) inset; }
+  .hint { display:flex; gap:6px; align-items:flex-start; font-size:12px; margin:6px 0 0; color:var(--muted); }
+  .hint.info svg { color:var(--info); flex:none; margin-top:1px; }
+  .err { display:flex; gap:6px; align-items:flex-start; color:var(--bad); font-size:12px; margin:6px 0 0; }
+  .err[hidden], .hint[hidden], [hidden] { display:none !important; }
+  .show { display:flex; align-items:center; gap:6px; font-size:13px; font-weight:400; margin:10px 0 0; cursor:pointer; }
+  .show input { margin:0; width:15px; height:15px; }
+  .btn { display:block; width:100%; margin-top:18px; padding:8px 10px; border-radius:8px; border:1px solid var(--btnLine); background:var(--btn);
+    color:var(--btnInk); font:inherit; font-size:14px; cursor:pointer; text-align:center; box-shadow:0 2px 5px rgba(213,217,217,.5); }
+  .btn:hover { filter:brightness(.96); text-decoration:none; color:var(--btnInk); }
+  .btn:focus-visible { outline:0; box-shadow:0 0 0 3px var(--ring); }
+  .btn:disabled { opacity:.6; cursor:wait; }
+  .btn.plain { background:var(--card); border-color:var(--line); color:var(--ink); box-shadow:0 2px 5px rgba(15,17,17,.08); }
+  .small { font-size:12px; color:var(--muted); margin:16px 0 0; line-height:1.5; }
+  .alert { border:1px solid var(--bad); border-radius:8px; padding:12px 14px 12px 44px; margin-bottom:14px; position:relative; background:var(--card); }
+  .alert::before { content:"!"; position:absolute; left:14px; top:12px; width:20px; height:20px; border-radius:50%; background:var(--bad); color:#fff;
+    font-weight:700; font-size:14px; display:grid; place-items:center; line-height:1; }
+  .alert.good { border-color:var(--good); }
+  .alert.good::before { content:"✓"; background:var(--good); }
+  .alert h2 { margin:0 0 2px; font-size:16px; color:var(--bad); font-weight:400; }
+  .alert.good h2 { color:var(--good); }
+  .alert p { margin:0; font-size:13px; }
+  .divider { display:flex; align-items:center; gap:10px; color:var(--muted); font-size:12px; margin:22px 0 2px; }
+  .divider::before, .divider::after { content:""; flex:1; border-top:1px solid var(--line); }
+  .divider + .btn { margin-top:8px; }
+  details { margin-top:12px; font-size:13px; }
+  details summary { color:var(--link); cursor:pointer; }
+  details p { margin:6px 0 0; color:var(--muted); }
+  .rule { border:0; border-top:1px solid var(--line); margin:22px 0 14px; }
+  .switch { font-size:13px; margin:0; }
+  footer { border-top:1px solid var(--line); margin-top:28px; padding:20px 16px 30px; text-align:center; font-size:12px; color:var(--muted); background:linear-gradient(to bottom,rgba(0,0,0,.035),transparent 3px); }
+  footer nav { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin-bottom:8px; }
+  .who { display:flex; align-items:center; gap:12px; margin-bottom:6px; }
+  .av { width:44px; height:44px; border-radius:50%; background:#131921; color:#fff; display:grid; place-items:center; font-weight:700; font-size:18px; flex:none; }
+  .who b { display:block; font-size:16px; }
+  .who span { color:var(--muted); font-size:13px; word-break:break-all; }
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="logo" href="/" aria-label="WishlistMarket home"><span>WishlistMarket<svg width="58" height="10" viewBox="0 0 58 10" aria-hidden="true"><path d="M2 2 Q29 12 54 3" stroke="#ff9900" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M49 1 L55 3 L51 7" stroke="#ff9900" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+
+  <div class="alert" id="alert" role="alert" hidden><h2 id="alert-h">There was a problem</h2><p id="alert-p"></p></div>
+
+  <!-- Already signed in -->
+  <section class="box" id="already" hidden>
+    <h1>You're signed in</h1>
+    <div class="who"><span class="av" id="av" aria-hidden="true"></span><div><b id="who-name"></b><span id="who-email"></span></div></div>
+    <a class="btn" id="continue" href="/">Continue</a>
+    <button type="button" class="btn plain" id="switch">Sign in as someone else</button>
+  </section>
+
+  <!-- Sign in -->
+  <section class="box" id="in" hidden>
+    <h1>Sign in</h1>
+    <form id="in-form" novalidate>
+      <label for="in-email">Email</label>
+      <input id="in-email" type="email" autocomplete="username" required autofocus>
+      <p class="err" id="in-email-err" hidden></p>
+      <label for="in-pass">Password</label>
+      <input id="in-pass" type="password" autocomplete="current-password" required>
+      <p class="err" id="in-pass-err" hidden></p>
+      <label class="show"><input type="checkbox" data-show="in-pass"> Show password</label>
+      <button class="btn" type="submit" id="in-btn">Sign in</button>
+    </form>
+    <p class="small">You stay signed in on this device for 30 days, unless you sign out. Your lists, saved AI keys and agent tokens live in your account.</p>
+    <details>
+      <summary>Forgot your password?</summary>
+      <p>Resetting a password by email isn't available yet. If you're still signed in on another device, change it there under Your account › Login &amp; security.</p>
+    </details>
+  </section>
+  <div id="new-cta" hidden>
+    <div class="divider">New to WishlistMarket?</div>
+    <a class="btn plain" id="to-new" href="#">Create your WishlistMarket account</a>
+  </div>
+
+  <!-- Create account -->
+  <section class="box" id="up" hidden>
+    <h1>Create account</h1>
+    <div id="closed" hidden><p>New accounts can't be made on this site right now.</p></div>
+    <form id="up-form" novalidate>
+      <label for="up-name">Your name <span class="opt">(optional)</span></label>
+      <input id="up-name" type="text" autocomplete="name" maxlength="80" placeholder="First and last name">
+      <label for="up-email">Email</label>
+      <input id="up-email" type="email" autocomplete="email" required>
+      <p class="err" id="up-email-err" hidden></p>
+      <label for="up-pass">Password</label>
+      <input id="up-pass" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters">
+      <p class="hint info" id="up-pass-hint"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6.2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7 6v4M7 3.6v.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Passwords must be at least 8 characters.</p>
+      <p class="err" id="up-pass-err" hidden></p>
+      <label for="up-pass2">Re-enter password</label>
+      <input id="up-pass2" type="password" autocomplete="new-password" required>
+      <p class="err" id="up-pass2-err" hidden></p>
+      <label class="show"><input type="checkbox" data-show="up-pass up-pass2"> Show passwords</label>
+      <div id="invite-row" hidden>
+        <label for="up-invite">Invite code</label>
+        <input id="up-invite" type="text" autocomplete="off" spellcheck="false">
+        <p class="hint">This site is invite-only for now. Ask the person who shared it for the code.</p>
+        <p class="err" id="up-invite-err" hidden></p>
+      </div>
+      <button class="btn" type="submit" id="up-btn">Create your account</button>
+    </form>
+    <p class="small">Your password is stored as a salted hash. Saved AI keys are encrypted and never shown again after you save them.</p>
+    <hr class="rule">
+    <p class="switch">Already have an account? <a href="#" id="to-in">Sign in ›</a></p>
+  </section>
+</div>
+<footer>
+  <nav><a href="/">WishlistMarket home</a><a href="/hire">AI shoppers</a><a href="/account">Your account</a></nav>
+  Your own shopping lists, researched by the AI you choose.
+</footer>
+<script>
+const $ = s => document.querySelector(s);
+const qs = new URLSearchParams(location.search);
+// Only come back to a page on this site, and never to this page.
+const next = (() => {
+  const n = qs.get("next") || "/";
+  return /^\/(?![\/\\])/.test(n) && !/^\/signin\b/.test(n) ? n : "/";
+})();
+let mode = qs.get("new") ? "up" : "in", me = null, cfg = { signups: "open" };
+
+async function api(method, path, body) {
+  const r = await fetch(path, { method, credentials: "same-origin",
+    headers: body ? { "Content-Type": "application/json" } : { Accept: "application/json" }, body: body ? JSON.stringify(body) : undefined });
+  let j = {};
+  try { j = await r.json(); } catch {}
+  if (!r.ok) { const e = new Error(j.error || `Something went wrong (error ${r.status}). Try again.`); e.status = r.status; throw e; }
+  return j;
+}
+function alertBox(title, text, good) {
+  const a = $("#alert");
+  a.hidden = !title;
+  a.classList.toggle("good", !!good);
+  $("#alert-h").textContent = title || "";
+  $("#alert-p").textContent = text || "";
+}
+function fieldErr(id, text) {
+  const input = $("#" + id), err = $("#" + id + "-err");
+  input.setAttribute("aria-invalid", text ? "true" : "false");
+  if (err) {
+    err.hidden = !text;
+    err.textContent = text ? "! " + text : "";
+    if (text) input.setAttribute("aria-describedby", err.id); else input.removeAttribute("aria-describedby");
+  }
+  return !text;
+}
+const validEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+
+function show(m) {
+  mode = m;
+  $("#already").hidden = m !== "already";
+  $("#in").hidden = m !== "in";
+  $("#new-cta").hidden = m !== "in" || cfg.signups === "closed";
+  $("#up").hidden = m !== "up";
+  const closed = cfg.signups === "closed";
+  $("#closed").hidden = !closed;
+  $("#up-form").hidden = closed;
+  $("#invite-row").hidden = cfg.signups !== "invite";
+  document.title = (m === "up" ? "Create account" : m === "already" ? "Your account" : "Sign in") + " · WishlistMarket";
+  const u = new URL(location.href);
+  if (m === "up") u.searchParams.set("new", "1"); else u.searchParams.delete("new");
+  history.replaceState(null, "", u);
+  const focus = m === "in" ? ($("#in-email").value ? "#in-pass" : "#in-email") : m === "up" ? "#up-name" : "#continue";
+  setTimeout(() => $(focus)?.focus(), 0);
+}
+$("#to-new").onclick = e => { e.preventDefault(); alertBox(); $("#up-email").value ||= $("#in-email").value; show("up"); };
+$("#to-in").onclick = e => { e.preventDefault(); alertBox(); $("#in-email").value ||= $("#up-email").value; show("in"); };
+$("#switch").onclick = async () => {
+  try { await api("POST", "/api/auth/logout"); } catch {}
+  me = null; alertBox("You're signed out", "Sign in with another account.", true); show("in");
+};
+for (const c of document.querySelectorAll("[data-show]")) {
+  c.onchange = () => { for (const id of c.dataset.show.split(" ")) $("#" + id).type = c.checked ? "text" : "password"; };
+}
+
+async function busy(btn, fn) { btn.disabled = true; try { await fn(); } finally { btn.disabled = false; } }
+function done() { location.replace(next); }
+
+$("#in-form").onsubmit = e => {
+  e.preventDefault();
+  alertBox();
+  const email = $("#in-email").value, pass = $("#in-pass").value;
+  const ok = fieldErr("in-email", !email.trim() ? "Enter your email" : !validEmail(email) ? "That doesn't look like an email address" : "")
+    & fieldErr("in-pass", pass ? "" : "Enter your password");
+  if (!ok) return $("[aria-invalid=true]").focus();
+  busy($("#in-btn"), async () => {
+    try { await api("POST", "/api/auth/login", { email, password: pass }); done(); }
+    catch (err) {
+      $("#in-pass").value = "";
+      alertBox("There was a problem", err.message);
+      $("#in-pass").focus();
+    }
+  });
+};
+
+$("#up-form").onsubmit = e => {
+  e.preventDefault();
+  alertBox();
+  const email = $("#up-email").value, pass = $("#up-pass").value, pass2 = $("#up-pass2").value;
+  const ok = fieldErr("up-email", !email.trim() ? "Enter your email" : !validEmail(email) ? "That doesn't look like an email address" : "")
+    & fieldErr("up-pass", !pass ? "Enter a password" : pass.length < 8 ? "Use at least 8 characters" : "")
+    & fieldErr("up-pass2", !pass2 ? "Type your password again" : pass2 !== pass ? "Passwords don't match" : "")
+    & (cfg.signups !== "invite" || fieldErr("up-invite", $("#up-invite").value.trim() ? "" : "Enter the invite code"));
+  $("#up-pass-hint").hidden = !$("#up-pass-err").hidden;
+  if (!ok) return $("[aria-invalid=true]").focus();
+  busy($("#up-btn"), async () => {
+    try {
+      await api("POST", "/api/auth/signup", { name: $("#up-name").value.trim(), email, password: pass, invite: $("#up-invite").value.trim() || undefined });
+      done();
+    } catch (err) {
+      if (err.status === 409) {
+        $("#in-email").value = email;
+        alertBox("You already have an account", "An account with this email already exists. Sign in instead.");
+        show("in");
+        return;
+      }
+      if (/invite/i.test(err.message)) { cfg.signups = "invite"; $("#invite-row").hidden = false; fieldErr("up-invite", err.message); $("#up-invite").focus(); return; }
+      alertBox("There was a problem", err.message);
+    }
+  });
+};
+
+(async () => {
+  try { cfg = await api("GET", "/api/auth/config"); } catch {}
+  if (cfg.accounts === false) alertBox("Accounts aren't switched on", "This copy of WishlistMarket has no account storage set up yet.");
+  try { me = await api("GET", "/api/me"); } catch { me = null; }
+  if (me) {
+    const u = me.user, first = (u.name || "").trim().split(/\s+/)[0] || u.email.split("@")[0];
+    $("#av").textContent = first[0].toUpperCase();
+    $("#who-name").textContent = u.name || first;
+    $("#who-email").textContent = u.email;
+    $("#continue").href = next;
+    show("already");
+  } else show(mode);
+})();
+</script>
+</body>
+</html>

@@ -1,3 +1,5 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>WishlistMarket</title><link rel="icon" href="/icon.svg" type="image/svg+xml"><link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><meta name="theme-color" content="#131921"><meta name="apple-mobile-web-app-title" content="WishlistMarket">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,7 +17,7 @@
   --pill:#232f3e;--pillInk:#fff;--tag:#cc0c39;--pick:#c45500;
 }
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.4}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.4}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--head)}
 a{color:var(--link);text-decoration:none}
 a:hover{text-decoration:underline}
@@ -240,6 +242,8 @@ dialog::backdrop{background:rgba(15,17,17,.5)}
 .dlg-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:#fff;padding:10px 16px;border-radius:100px;font-size:14px;z-index:40;max-width:calc(100vw - 32px)}
 .loading{padding:40px 0;color:var(--muted);text-align:center}
+/* account menu (account-menu.js) takes the place of the Shoppers and Settings icons on phones; both are in its menu */
+@media (max-width:560px){header.top .wrap.wm-has-gear{grid-template-columns:auto minmax(0,1fr) auto}header.top .wm-tools{display:none}}
 </style>
 
 <header class="top"><div class="wrap" id="head"></div></header>
@@ -362,7 +366,7 @@ function renderHead(){
       <button type="button" data-mode="shop" aria-pressed="${shop}">Shopping</button>
       <button type="button" data-mode="services" aria-pressed="${!shop}">Services</button>
     </div>
-    <button type="button" class="acct" data-view="${shop?"projects":"sprojects"}"><small>Hello</small><b>${shop?"Your Projects":"Your Searches"}</b></button>`;
+    ${ONSITE?`<div data-wm-acct></div>`:`<button type="button" class="acct" data-view="${shop?"projects":"sprojects"}"><small>Hello</small><b>${shop?"Your Projects":"Your Searches"}</b></button>`}`;
   const v=st.view;const cur=(t,id)=>v.t===t&&(id===undefined||v.id===id)?'aria-current="true"':"";
   $("#subnav").innerHTML=shop?
     `<button type="button" data-act="home" ${cur("home")}>☰ All</button>`+
@@ -658,6 +662,19 @@ function render(){
   $("#main").innerHTML=h;
   const on=document.querySelector(".storetabs [aria-pressed=\"true\"]");if(on){const bar=on.parentElement;bar.scrollLeft=Math.max(0,on.offsetLeft-bar.offsetLeft-16)}
 }
+/* WishlistMarket only: /?view=projects, /?q=drill and /?settings=1 open straight there (the account menu links here). */
+const ONSITE=!window.claude;
+const SHOPV=["lists","items","projects"],SVCV=["searches","places","sprojects"];
+function openView(v){if(SHOPV.includes(v))st.mode="shop";else if(SVCV.includes(v))st.mode="services";else return false;st.dept="";st.view={t:v};st.f={};return true}
+if(ONSITE){
+  const qs=new URLSearchParams(location.search);
+  if(qs.get("view"))openView(qs.get("view"));
+  if(qs.get("q")){st.q=qs.get("q").slice(0,200);st.view={t:"search"}}
+  if(qs.get("settings"))addEventListener("load",()=>window.WM?.open?.());
+  if(qs.get("closed"))setTimeout(()=>toast("Your account was closed. Everything in it was deleted."),300);
+  if(location.search)try{history.replaceState(null,"",location.pathname+location.hash)}catch(_){}
+  window.WMNav=v=>{if(openView(v)){pushNav();render();window.scrollTo({top:0})}};
+}
 function navState(){return{mk:1,view:st.view,f:st.f,mode:st.mode,dept:st.dept,q:st.q}}
 function pushNav(){try{history.pushState(navState(),"")}catch(_){}}
 function go(view,f,fromPop){if(view.t==="list")markViewed(view.id);st.view=view;st.f=f||{};st.shown=48;if(view.t!=="search")st.q="";if(!fromPop)pushNav();render();window.scrollTo({top:0})}
@@ -744,3 +761,4 @@ function renderMainOnly(){const y=window.scrollY;const a=$("#sq"),val=a.value,po
 })();
 </script>
 <script src="settings.js" defer></script>
+<script src="account-menu.js" defer></script>

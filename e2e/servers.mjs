@@ -1,16 +1,18 @@
-// Browser test servers: the site (public/ + /api via app.js) on :8788, and a fake
-// Ollama (CORS like OLLAMA_ORIGINS), Tavily, OpenAI and store pages on :11434.
+// Browser test servers: the site (public/ + /api via app.js, accounts in an
+// in-memory database) on :8788, and a fake Ollama (CORS like OLLAMA_ORIGINS),
+// Tavily, OpenAI and store pages on :11434.
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { handle } from "../app.js";
+import { fakeD1 } from "../accounts/fake-d1.js";
 
 const ROOT = fileURLToPath(new URL("../public", import.meta.url));
 const SITE_PORT = 8788, FAKE_PORT = 11434;
 export const state = { allowed: [], chats: [] };
 const FAKE = `http://127.0.0.1:${FAKE_PORT}`;
-const env = { AI_RETRIES: "0", LINK_ALLOW_PRIVATE: "true",
+const env = { AI_RETRIES: "0", LINK_ALLOW_PRIVATE: "true", DB: fakeD1(), ACCOUNTS_SECRET: "e2e-".repeat(10),
   AI_API_BASES: JSON.stringify({ tavily: `${FAKE}/tavily`, openai: `${FAKE}/openai/v1` }) };
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".webmanifest": "application/manifest+json", ".jpg": "image/jpeg", ".webp": "image/webp" };
 

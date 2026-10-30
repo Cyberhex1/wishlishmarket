@@ -23,6 +23,7 @@
   header .logo { color:#fff; text-decoration:none; font-weight:700; font-size:20px; }
   header .who { margin-left:auto; font-size:13px; color:#ccc; }
   header .who a { color:#fff; }
+  header .acct-slot { margin-left:auto; }
   .sub { background:var(--head2); color:#fff; padding:6px 16px; font-size:13px; display:flex; gap:16px; flex-wrap:wrap; }
   .sub a { color:#fff; text-decoration:none; } .sub a:hover { text-decoration:underline; }
   main { max-width:1100px; margin:0 auto; padding:16px; }
@@ -104,7 +105,7 @@
 <body>
 <header>
   <a class="logo" href="/" aria-label="WishlistMarket home">WishlistMarket</a>
-  <div class="who" id="who"></div>
+  <div class="acct-slot" data-wm-acct></div>
 </header>
 <nav class="sub" aria-label="Page sections">
   <a href="/">← Back to the market</a>
@@ -181,6 +182,7 @@
 <footer id="foot"></footer>
 <dialog id="dlg" aria-labelledby="dlg-h"><div class="hd"><h2 id="dlg-h"></h2><button type="button" class="x" data-close aria-label="Close">×</button></div><div class="bd" id="dlg-bd"></div></dialog>
 <script src="/settings.js" defer></script>
+<script src="/account-menu.js" defer></script>
 <script type="module" src="/shoppers/hire.js"></script>
 </body>
 </html>
