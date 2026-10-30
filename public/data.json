@@ -1,0 +1,227 @@
+{
+ "lists": [
+  {
+   "id": "demo-headphones",
+   "title": "Wireless Headphones · Amazon",
+   "category": "Electronics",
+   "projectId": "demo",
+   "storeIds": [
+    "amazon"
+   ],
+   "createdAt": "2026-10-30T00:00:00Z",
+   "updatedAt": "2026-10-30T00:00:00Z",
+   "summary": "Sample list: a few example headphones, best first. Replace with your own lists.",
+   "items": [
+    {
+     "id": "over-ear",
+     "need": "Over-ear noise cancelling",
+     "type": "Over-ear",
+     "rank": 1,
+     "notes": "",
+     "picks": [
+      {
+       "availability": "unknown",
+       "brand": "ExampleBrand",
+       "name": "Example Over-Ear ANC Headphones",
+       "price": 199.99,
+       "priceText": "$199.99",
+       "prosGeneral": [
+        "Strong noise cancelling",
+        "Long battery"
+       ],
+       "consGeneral": [
+        "Bulky case"
+       ],
+       "rank": 1,
+       "score": 8.1,
+       "store": "amazon",
+       "url": "https://www.amazon.com/s?k=noise+cancelling+headphones",
+       "why": "Sample pick: shows how a top recommendation looks."
+      }
+     ]
+    },
+    {
+     "id": "earbuds",
+     "need": "True wireless earbuds",
+     "type": "Earbuds",
+     "rank": 2,
+     "notes": "",
+     "picks": [
+      {
+       "availability": "unknown",
+       "brand": "ExampleBrand",
+       "name": "Example Wireless Earbuds",
+       "price": 79.99,
+       "priceText": "$79.99",
+       "prosGeneral": [
+        "Small and light"
+       ],
+       "consGeneral": [
+        "Shorter battery"
+       ],
+       "rank": 1,
+       "score": 7.2,
+       "store": "amazon",
+       "url": "https://www.amazon.com/s?k=wireless+earbuds",
+       "why": "Sample pick: a cheaper second choice."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "demo-kitchen",
+   "title": "Kitchen Basics · Walmart",
+   "category": "Home & Kitchen",
+   "projectId": "demo",
+   "storeIds": [
+    "walmart"
+   ],
+   "createdAt": "2026-10-30T00:00:00Z",
+   "updatedAt": "2026-10-30T00:00:00Z",
+   "summary": "Sample list: example kitchen items.",
+   "items": [
+    {
+     "id": "skillet",
+     "need": "10-inch skillet",
+     "type": "Cookware",
+     "rank": 1,
+     "notes": "",
+     "picks": [
+      {
+       "availability": "unknown",
+       "brand": "ExampleBrand",
+       "name": "Example Nonstick Skillet, 10 in",
+       "price": 24.97,
+       "priceText": "$24.97",
+       "prosGeneral": [
+        "Even heating"
+       ],
+       "consGeneral": [
+        "Hand wash only"
+       ],
+       "rank": 1,
+       "score": 7.8,
+       "store": "walmart",
+       "url": "https://www.walmart.com/search?q=nonstick+skillet",
+       "why": "Sample pick for the demo data."
+      }
+     ]
+    },
+    {
+     "id": "knife",
+     "need": "Chef's knife",
+     "type": "Knives",
+     "rank": 2,
+     "notes": "",
+     "picks": [
+      {
+       "availability": "unknown",
+       "brand": "ExampleBrand",
+       "name": "Example 8-inch Chef's Knife",
+       "price": 19.88,
+       "priceText": "$19.88",
+       "prosGeneral": [
+        "Sharp out of the box"
+       ],
+       "consGeneral": [
+        "Needs honing"
+       ],
+       "rank": 1,
+       "score": 7.0,
+       "store": "walmart",
+       "url": "https://www.walmart.com/search?q=chef+knife",
+       "why": "Sample pick for the demo data."
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "projects": [
+  {
+   "id": "demo",
+   "name": "Demo project",
+   "description": "Sample data so the site has something to show. Your real lists live in your account.",
+   "createdAt": "2026-10-30T00:00:00Z"
+  }
+ ],
+ "stores": [
+  {
+   "id": "amazon",
+   "name": "Amazon",
+   "kind": "online",
+   "url": "https://www.amazon.com",
+   "address": "",
+   "notes": ""
+  },
+  {
+   "id": "walmart",
+   "name": "Walmart",
+   "kind": "online",
+   "url": "https://www.walmart.com",
+   "address": "",
+   "notes": ""
+  }
+ ],
+ "requests": [],
+ "svc_searches": [
+  {
+   "id": "demo-plumber",
+   "title": "Plumber (sample)",
+   "category": "Home services",
+   "area": "Your town",
+   "createdAt": "2026-10-30T00:00:00Z",
+   "projectId": "demo-home",
+   "criteria": [
+    "Licensed",
+    "Clear prices"
+   ],
+   "summary": "Sample service search. Replace with your own.",
+   "needs": [
+    {
+     "id": "plumber",
+     "need": "Licensed plumber",
+     "notes": "",
+     "results": [
+      {
+       "providerId": "demo-plumbing",
+       "name": "Example Plumbing Co.",
+       "rank": 1,
+       "score": 7.5,
+       "why": "Sample result for the demo data.",
+       "prosGeneral": [
+        "Posts its prices"
+       ],
+       "consGeneral": [
+        "Weekdays only"
+       ],
+       "costText": "Example: $95 service call",
+       "url": "https://example.com"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "svc_projects": [
+  {
+   "id": "demo-home",
+   "name": "Home",
+   "description": "Sample services project.",
+   "createdAt": "2026-10-30T00:00:00Z"
+  }
+ ],
+ "svc_providers": [
+  {
+   "id": "demo-plumbing",
+   "name": "Example Plumbing Co.",
+   "type": "Plumber",
+   "address": "123 Main St, Your Town",
+   "phone": "",
+   "notes": "",
+   "url": "https://example.com"
+  }
+ ],
+ "svc_requests": []
+}

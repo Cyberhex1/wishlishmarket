@@ -1,0 +1,746 @@
+<title>WishlistMarket</title><link rel="icon" href="/icon.svg" type="image/svg+xml"><link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><meta name="theme-color" content="#131921"><meta name="apple-mobile-web-app-title" content="WishlistMarket">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;700&display=swap">
+<style>
+/* Layout: Amazon-style storefront. Dark header with search, department strip, list tiles with one top-pick thumbnail, refinement sidebar on PC. */
+:root{
+  color-scheme:light;
+  --font:"Arimo",Arial,Helvetica,sans-serif;
+  --bg:#e3e6e6;--card:#fff;--ink:#0f1111;--muted:#565959;--line:#d5d9d9;
+  --head:#131921;--headInk:#fff;--sub:#232f3e;--subInk:#fff;
+  --accent:#febd69;--btn:#ffd814;--btnLine:#fcd200;--btnInk:#0f1111;
+  --link:#007185;--price:#0f1111;--good:#067d62;--bad:#b12704;--warn:#c45500;
+  --chip:#f0f2f2;--hero1:#c4e1e8;--hero2:#e3e6e6;--radius:8px;
+  --pill:#232f3e;--pillInk:#fff;--tag:#cc0c39;--pick:#c45500;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.4}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--head)}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1400px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+.mock{background:#fff8d6;color:#3b3000;border-bottom:1px solid #e9d98a;font-size:12.5px}
+.mock .wrap{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;padding-block:6px}
+
+/* header */
+.top{background:var(--head);color:var(--headInk);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+.top .wrap{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto auto;gap:10px 14px;align-items:center;padding-block:8px}
+.logo{border:1px solid transparent;background:none;color:var(--headInk);display:flex;align-items:flex-end;padding:4px 6px;border-radius:3px}
+.logo:hover{border-color:var(--headInk)}
+.logo .word{font-weight:700;font-size:25px;letter-spacing:-.5px;line-height:1}
+.logo svg{display:block}
+.loc{display:flex;flex-direction:column;font-size:12px;line-height:1.15;padding:4px 6px}
+.loc small{opacity:.75}
+.loc b{font-size:14px}
+.search{display:flex;min-width:0;height:40px;border-radius:6px;overflow:hidden;background:#fff}
+.search select{border:0;background:#e6e6e6;color:#0f1111;padding:0 6px;font-size:12px;max-width:150px}
+.search input{flex:1;min-width:0;border:0;padding:0 12px;font:inherit;font-size:15px;color:#0f1111;background:#fff}
+.search button{border:0;width:46px;background:var(--accent);display:grid;place-items:center}
+.modes{display:flex;gap:4px;background:rgba(255,255,255,.12);padding:3px;border-radius:100px}
+.modes button{border:0;background:none;color:var(--headInk);padding:6px 12px;border-radius:100px;font-weight:700;font-size:13px}
+.modes button[aria-pressed="true"]{background:var(--headInk);color:var(--head)}
+.acct{border:1px solid transparent;background:none;color:var(--headInk);display:flex;flex-direction:column;align-items:flex-start;font-size:12px;line-height:1.15;padding:4px 6px;border-radius:3px}
+.acct:hover{border-color:var(--headInk)}
+.acct b{font-size:14px}
+.sub{background:var(--sub);color:var(--subInk)}
+.sub .wrap{display:flex;gap:2px;overflow-x:auto;padding-block:4px;scrollbar-width:none}
+.sub .wrap::-webkit-scrollbar{display:none}
+.sub button{border:1px solid transparent;background:none;color:var(--subInk);white-space:nowrap;padding:6px 9px;border-radius:3px;font-size:14px}
+.sub button:hover{border-color:currentColor}
+.sub button[aria-current="true"]{font-weight:700;border-color:currentColor}
+.sub .sep{width:1px;background:rgba(255,255,255,.25);margin:6px 6px;flex:none}
+
+main{padding-block:16px 48px}
+.crumbs{font-size:13px;color:var(--muted);margin-bottom:10px;display:flex;gap:6px;flex-wrap:wrap}
+.crumbs button{border:0;background:none;padding:0;color:var(--link)}
+
+/* hero */
+.hero{border-radius:var(--radius);padding:24px;margin-bottom:18px;background:linear-gradient(180deg,var(--hero1),var(--hero2));display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between}
+.hero h1{margin:0 0 6px;font-size:28px;line-height:1.15;text-wrap:balance}
+.hero p{margin:0;color:var(--muted);max-width:60ch}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;min-width:104px;text-align:left;display:flex;flex-direction:column}
+.stat:hover{border-color:var(--link);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.stat b{font-size:22px;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+.stat em{font-style:normal;font-size:12px;color:var(--link);margin-top:2px}
+
+/* shelves */
+.shelf{background:var(--card);padding:18px;margin-bottom:16px;border-radius:var(--radius)}
+.shelf-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin-bottom:12px}
+.shelf-h h2{margin:0;font-size:21px}
+.shelf-h p{margin:0;color:var(--muted);font-size:13px}
+.shelf-h .all{margin-left:auto;font-size:13px;border:0;background:none;color:var(--link);padding:0}
+.row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(190px,220px);gap:14px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x proximity}
+.tile{border:0;background:none;text-align:left;padding:0;display:flex;flex-direction:column;gap:5px;scroll-snap-align:start;min-width:0}
+.tile .pic{aspect-ratio:1;background:#f7f7f7;border-radius:calc(var(--radius) - 2px);display:grid;place-items:center;overflow:hidden;max-width:100%;position:relative;width:100%}
+.tile .pic img{width:100%;height:100%;object-fit:contain;padding:10px;mix-blend-mode:multiply}
+.tile .t{font-weight:700;font-size:14px;line-height:1.25;color:var(--ink)}
+.tile:hover .t{color:var(--bad);text-decoration:underline}
+.tile .m{font-size:12.5px;color:var(--muted)}
+.tile .tp{font-size:12px;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tile .tp b{color:var(--pick)}
+.tile .pr{font-size:13px}
+.tile .st{font-size:12.5px;font-weight:700;color:var(--link)}
+.storetabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none}
+.storetabs button{flex:none;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:8px 14px 8px 8px;font-size:14px;font-weight:700}
+.storetabs button small{font-weight:400;color:var(--muted)}
+.storetabs button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.storetabs .sl{width:30px;height:30px;border-radius:6px;display:grid;place-items:center;color:#fff;font-size:14px;font-weight:800}
+.badge{position:absolute;top:8px;left:8px;font-size:11px;font-weight:700;padding:3px 7px;border-radius:3px;background:var(--pill);color:var(--pillInk)}
+.icon{width:58%;aspect-ratio:1;border-radius:22%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:38px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.tiles>.cardt{background:var(--card);border-radius:var(--radius);padding:12px;border:1px solid var(--line);display:flex}
+.tiles>.cardt>.tile{width:100%}
+
+/* page head */
+.listhead{background:var(--card);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+.listhead h1{margin:0 0 6px;font-size:24px;text-wrap:balance}
+.listhead p{margin:0;color:var(--muted);max-width:80ch}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{background:var(--chip);border-radius:100px;padding:3px 10px;font-size:12.5px;border:1px solid transparent}
+button.chip:hover{border-color:var(--line)}
+button.chip[aria-pressed="true"]{background:var(--pill);color:var(--pillInk)}
+
+/* refine layout */
+.refine{display:grid;grid-template-columns:230px minmax(0,1fr);gap:16px;align-items:start}
+.facets{background:var(--card);border-radius:var(--radius);padding:14px;position:sticky;top:120px;display:flex;flex-direction:column;gap:14px}
+.facets h3{margin:0 0 4px;font-size:14px}
+.facets button{display:block;border:0;background:none;padding:3px 0;text-align:left;font-size:13.5px;color:var(--ink);width:100%}
+.facets button:hover{color:var(--bad)}
+.facets button[aria-pressed="true"]{font-weight:700}
+.facets button small{color:var(--muted)}
+.resbar{background:var(--card);border-radius:var(--radius);padding:10px 14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;font-size:14px}
+.resbar select{font:inherit;font-size:13px;padding:4px 6px;border-radius:6px;border:1px solid var(--line);background:#f0f2f2}
+.subsec{margin-bottom:18px}
+.subsec h2{font-size:18px;margin:0 0 10px}
+
+/* list page */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--card);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0;border:1px solid var(--line)}
+.card .pic{aspect-ratio:1;display:grid;place-items:center;background:#f7f7f7;border-radius:calc(var(--radius) - 4px);overflow:hidden;position:relative;max-width:100%}
+.card .pic img{width:100%;height:100%;object-fit:contain;padding:12px;mix-blend-mode:multiply}
+.flag{position:absolute;top:8px;left:8px;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:3px;background:var(--pill);color:var(--pillInk)}
+.flag.alt{background:var(--tag);color:#fff}
+.need{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.name{font-size:15px;line-height:1.3;color:var(--ink);font-weight:500;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+a.name:hover{color:var(--bad)}
+.brand{font-size:12.5px;color:var(--link)}
+.price{display:flex;align-items:flex-start;gap:1px;color:var(--price);font-variant-numeric:tabular-nums}
+.price .sym{font-size:13px;margin-top:3px}
+.price .whole{font-size:28px;line-height:1;font-weight:500}
+.price .cents{font-size:13px;margin-top:3px}
+.price .txt{font-size:20px;font-weight:700}
+.stock{font-size:13px;font-weight:700}
+.stock.in_stock{color:var(--good)}
+.stock.out_of_stock,.stock.discontinued,.stock.listing_gone{color:var(--bad)}
+.stock.unknown{color:var(--warn)}
+.where{font-size:12.5px;color:var(--muted)}
+.where button{border:0;background:none;padding:0;color:var(--link);font-size:12.5px}
+.why{font-size:13px}
+.pc{margin:0;padding-left:18px;font-size:12.5px}
+.pc.c{color:var(--muted)}
+.btn{display:inline-flex;justify-content:center;align-items:center;gap:6px;border:1px solid var(--btnLine);background:var(--btn);color:var(--btnInk);border-radius:100px;padding:8px 14px;font-weight:700;font-size:13.5px;text-decoration:none;margin-top:auto}
+.btn:hover{filter:brightness(.95);text-decoration:none}
+.btn.ghost{background:transparent;color:var(--muted);border-color:var(--line)}
+.more{border:0;background:none;color:var(--link);font-size:12.5px;padding:2px 0;text-align:left}
+.alts{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:8px}
+.alt{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;align-items:center;font-size:12.5px}
+.alt img{width:52px;height:52px;object-fit:contain;background:#f7f7f7;border-radius:4px}
+.side{position:sticky;top:120px;display:flex;flex-direction:column;gap:12px}
+.box{background:var(--card);border-radius:var(--radius);padding:16px;border:1px solid var(--line)}
+.box h3{margin:0 0 8px;font-size:15px}
+.sum{font-size:18px}
+.sum b{font-variant-numeric:tabular-nums}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;font-size:13px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0}
+.note{font-size:12.5px;color:var(--muted)}
+.empty{background:var(--card);border-radius:var(--radius);padding:24px;text-align:center;color:var(--muted)}
+.showmore{display:flex;justify-content:center;margin-top:16px}
+.showmore .btn{margin:0;background:#fff;border-color:var(--line)}
+
+/* services */
+.results{display:flex;flex-direction:column;gap:12px}
+.res{background:var(--card);border-radius:var(--radius);border:1px solid var(--line);padding:14px;display:grid;grid-template-columns:180px minmax(0,1fr);gap:16px}
+.res .pic{aspect-ratio:1;background:#f7f7f7;border-radius:calc(var(--radius) - 4px);display:grid;place-items:center;overflow:hidden;position:relative;max-width:100%}
+.res .pic img{width:100%;height:100%;object-fit:cover}
+.res h3{margin:0;font-size:18px;line-height:1.25}
+.res .body{display:flex;flex-direction:column;gap:8px;min-width:0}
+.score{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.score .big{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.bars{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.bar{display:flex;align-items:center;gap:5px}
+.bar i{display:block;width:54px;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.bar i u{display:block;height:100%;background:var(--accent)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tel{user-select:all;font-weight:700;font-variant-numeric:tabular-nums}
+.needh{margin:20px 0 8px;font-size:19px}
+.needh small{display:block;font-size:13px;color:var(--muted);font-weight:400;margin-top:2px}
+.ok{color:var(--good);font-weight:700}
+.facets-m{display:none}
+
+@media (max-width:900px){
+  .top .wrap{grid-template-columns:auto minmax(0,1fr) auto}
+  .loc,.acct{display:none}
+  .search{grid-column:1/-1;grid-row:2}
+  .layout,.refine{grid-template-columns:minmax(0,1fr)}
+  .side{position:static;order:-1}
+  .side .box+.box{display:none}
+  .facets{display:none}
+  .facets-m{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;padding-bottom:4px;scrollbar-width:none}
+  .facets-m .chip{white-space:nowrap;background:var(--card)}
+  .facets-m .chip[aria-pressed="true"]{background:var(--pill);color:var(--pillInk)}
+}
+@media (max-width:560px){
+  .logo .word{font-size:21px}
+  .modes button{padding:6px 10px;font-size:12.5px}
+  .hero{padding:16px}
+  .hero h1{font-size:22px}
+  .stats{width:100%}
+  .stat{min-width:0;flex:1;padding:8px 10px}
+  .grid,.tiles{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .card{padding:10px}
+  .tiles>.cardt{padding:8px}
+  .price .whole{font-size:22px}
+  .name{font-size:13.5px}
+  .card .why,.card .pc{display:none}
+  .row{grid-auto-columns:minmax(140px,44%)}
+  .res{grid-template-columns:88px minmax(0,1fr);gap:10px;padding:12px}
+  .cols{grid-template-columns:1fr}
+  .shelf{padding:14px}
+}
+@media (prefers-reduced-motion:no-preference){.tile .pic img{transition:transform .2s}.tile:hover .pic img{transform:scale(1.04)}}
+/* live-site controls: ask, requests, project picker, dialogs */
+.sub .ask{margin-left:auto;background:var(--btn);color:var(--btnInk);border-color:var(--btnLine);border-radius:100px;font-weight:700;padding:5px 14px}
+.sub .ask:hover{border-color:var(--btnLine);filter:brightness(.95)}
+.sub .cnt{display:inline-block;min-width:18px;margin-left:4px;padding:0 5px;border-radius:100px;background:var(--accent);color:var(--head);font-size:12px;font-weight:700;text-align:center}
+.manage{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:13px}
+.manage select{font:inherit;font-size:13px;padding:6px 8px;border-radius:6px;border:1px solid var(--line);background:#f0f2f2;max-width:100%}
+.manage .btn,.dlg .btn,.listhead .btn{margin-top:0}
+.reqs{display:flex;flex-direction:column;gap:10px}
+.req{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.req.done{opacity:.75}
+.req .status{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--warn)}
+.req.done .status{color:var(--good)}
+.req .btn{align-self:flex-start;margin-top:4px}
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);padding:0;width:min(520px,calc(100vw - 32px))}
+dialog::backdrop{background:rgba(15,17,17,.5)}
+.dlg{padding:20px;display:flex;flex-direction:column;gap:12px}
+.dlg h3{margin:0;font-size:18px}
+.dlg .note{margin:0}
+.field{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700}
+.field select,.field input,.field textarea{font:inherit;font-weight:400;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);max-width:100%}
+.field textarea{min-height:110px;resize:vertical}
+.dlg-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:#fff;padding:10px 16px;border-radius:100px;font-size:14px;z-index:40;max-width:calc(100vw - 32px)}
+.loading{padding:40px 0;color:var(--muted);text-align:center}
+</style>
+
+<header class="top"><div class="wrap" id="head"></div></header>
+<nav class="sub" aria-label="Departments"><div class="wrap" id="subnav"></div></nav>
+<main class="wrap" id="main"></main>
+
+<dialog id="askDlg"><form class="dlg" id="askForm">
+  <h3>Ask Claude to update</h3>
+  <p class="note" id="askHelp"></p>
+  <label class="field">What to update<select id="askTarget"></select></label>
+  <label class="field">Request<textarea id="askText" required></textarea></label>
+  <div class="dlg-actions"><button type="button" class="btn ghost" data-close="askDlg">Cancel</button><button type="submit" class="btn">Save request</button></div>
+</form></dialog>
+<dialog id="projDlg"><form class="dlg" id="projForm">
+  <h3>New project</h3>
+  <label class="field">Name<input id="projName" required></label>
+  <label class="field">Notes<input id="projDesc" placeholder="Optional"></label>
+  <div class="dlg-actions"><button type="button" class="btn ghost" data-close="projDlg">Cancel</button><button type="submit" class="btn">Create project</button></div>
+</form></dialog>
+
+<script>
+(()=>{
+const RAW={lists:[],projects:[],stores:[],requests:[],svc_searches:[],svc_projects:[],svc_providers:[],svc_requests:[]};
+let S=RAW,P={},ST={},SP={},PV={},LI={},L2D={},ALLD=[],DI={};
+let DB=null,ready=false;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const byId=arr=>Object.fromEntries(arr.map(x=>[x.id,x]));
+const storeName=id=>ST[id]?.name||(id?id[0].toUpperCase()+id.slice(1):"");
+const AV={in_stock:"In stock",out_of_stock:"Out of stock",discontinued:"Discontinued",listing_gone:"Listing removed",unknown:"Stock not confirmed"};
+const PAL=["#0b7a75","#c45500","#5b4bb7","#b12704","#2a8703","#0071dc","#8a5a00","#a3195b"];
+const hue=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return PAL[h%PAL.length]};
+const fmtDate=d=>{if(!d)return"";const t=new Date(d.length===10?d+"T12:00:00":d);return isNaN(t)?d:t.toLocaleDateString("en-US",{month:"short",day:"numeric"})};
+
+/* Amazon-style departments. Each list sits in one department and one subcategory. */
+const DEPTS=[
+ {id:"electronics",name:"Electronics & Computers",subs:[
+   ["Laptops",["laptops-amazon-new","laptops-amazon-renewed","laptops-walmart-new","laptops-walmart-refurb","best-buy-laptops-new","best-buy-laptops-refurb","offerup-fl-fortnite-laptop"]],
+   ["Desktop & Gaming PCs",["sister-prebuilt-pc-amazon-new","sister-prebuilt-pc-amazon-renewed","offerup-gaming-pc"]],
+   ["Computer Components",["sister-pc-cpu-amazon-new","sister-pc-cpu-amazon-used","sister-pc-gpu-amazon-new","sister-pc-gpu-amazon-used-renewed","sister-pc-ssd-amazon-new","sister-pc-ssd-amazon-used"]]]},
+ {id:"home",name:"Home & Kitchen",subs:[
+   ["Fans",["cooling-fans","cooling-wall-fans"]],
+   ["Air Purifiers",["cooling-air-purifiers","cooling-purifier-fan-combos"]],
+   ["Furniture",["floor-sofa-bed-amazon-picks","floor-sofa-bed-walmart-wayfair-picks"]]]},
+ {id:"sports",name:"Sports & Outdoors",subs:[
+   ["Electric Bikes & Trikes",["e-bikes-amazon-new","e-bikes-amazon-used-refurb","e-bikes-walmart-new","e-bikes-walmart-within-a-month","best-buy-e-bikes-new","offerup-e-bikes"]],
+   ["Bike Accessories",["bike-accessories-amazon","bike-riding-and-comfort-walmart","bike-security-walmart"]]]},
+ {id:"health",name:"Health & Household",subs:[["Chronic Illness Care",["chronic-illness-amazon","chronic-illness-walmart"]]]},
+ {id:"beauty",name:"Beauty & Personal Care",subs:[["Skin Care",["skincare-amazon","skincare-walmart"]],["Wigs",["headband-wigs-amazon"]]]},
+ {id:"garden",name:"Patio, Lawn & Garden",subs:[["Indoor Gardening & Plants",["plants-walmart"]]]},
+ {id:"grocery",name:"Grocery & Gourmet Food",subs:[["Snacks",["bedside-snacks-walmart"]]]},
+];
+/* Lists not in the table above get a department from their category and title. */
+const GUESS=[[/laptop/,"electronics","Laptops"],[/gaming pc|prebuilt|desktop/,"electronics","Desktop & Gaming PCs"],[/\bcpu|\bgpu|\bssd|\bram\b|motherboard|component/,"electronics","Computer Components"],[/electronic|computer|monitor|\btv\b|phone|tablet|headphone/,"electronics","Electronics"],
+ [/helmet|lock|bike accessor|bike security|riding/,"sports","Bike Accessories"],[/bike|trike|scooter|mobility/,"sports","Electric Bikes & Trikes"],[/sport|outdoor|fitness|camp/,"sports","Sports & Fitness"],
+ [/plant|garden|patio|lawn/,"garden","Indoor Gardening & Plants"],[/purif/,"home","Air Purifiers"],[/\bfan|cooling/,"home","Fans"],[/health|chronic|medical|shower chair/,"health","Chronic Illness Care"],
+ [/sofa|furniture|\bbed\b|couch|chair/,"home","Furniture"],[/home|kitchen/,"home","Home"],[/wig|hair/,"beauty","Wigs"],[/skin|beauty|makeup/,"beauty","Skin Care"],[/grocery|snack|food|drink/,"grocery","Snacks"]];
+const SVC_T={};
+const NEED_T={};
+const PLACE_T={};
+function derive(){
+  S=JSON.parse(JSON.stringify(RAW));
+  for(const l of S.lists){l.title=l.title||"Untitled list";l.items=Array.isArray(l.items)?l.items:[];l.storeIds=Array.isArray(l.storeIds)?l.storeIds:[];for(const it of l.items){it.id=it.id||it.need;it.picks=Array.isArray(it.picks)?it.picks:[]}}
+  for(const s of S.svc_searches){s.title=s.title||"Untitled search";s.needs=Array.isArray(s.needs)?s.needs:[]}
+  P=byId(S.projects);ST=byId(S.stores);SP=byId(S.svc_projects);PV=byId(S.svc_providers);LI=byId(S.lists);
+  const has=new Set(S.lists.map(l=>l.id));
+  const ds=DEPTS.map(d=>({id:d.id,name:d.name,subs:d.subs.map(([s,ids])=>[s,ids.filter(id=>has.has(id))])}));
+  const dById=byId(ds),other={id:"other",name:"Other",subs:[]};
+  L2D={};for(const d of ds)for(const [s,ids] of d.subs)for(const id of ids)L2D[id]={d,sub:s};
+  for(const l of S.lists)if(!L2D[l.id]){
+    const txt=((l.category||"")+" "+l.title).toLowerCase(),g=GUESS.find(([re])=>re.test(txt));
+    const d=g?dById[g[1]]:other,name=g?g[2]:"Other";
+    let sub=d.subs.find(x=>x[0]===name);if(!sub){sub=[name,[]];d.subs.push(sub)}
+    sub[1].push(l.id);L2D[l.id]={d,sub:name}}
+  if(other.subs.length)ds.push(other);
+  ALLD=ds.filter(d=>d.subs.some(x=>x[1].length));DI=byId(ALLD);
+  /* Short names: store moves out of the name, "New" is the default, any other condition becomes a tag. */
+  for(const l of S.lists){l.full=l.title;const m=/\(([^)]+)\)\s*$/.exec(l.title);const base=l.title.split(" · ")[0].replace(/\s*\([^)]*\)\s*$/,"").trim()||l.title;l.title=m&&!/^new$/i.test(m[1].trim())?`${base} (${m[1].trim()})`:base}
+  /* Short service names. The full original name stays on the place's card as a subtitle. */
+  for(const s of S.svc_searches){s.full=s.title;s.title=SVC_T[s.id]||s.title;for(const n of s.needs){n.need=NEED_T[n.need]||n.need;for(const r of n.results||[]){r.full=r.name;r.name=PLACE_T[r.name]||r.name}}}
+}
+const storesText=l=>l.storeIds.map(storeName).join(" & ");
+const cond=l=>{const m=/\(([^)]+)\)\s*$/.exec(l.full);if(!m)return"New";const c=m[1];if(/local/i.test(c))return"Local pickup";if(/refurb|renewed/i.test(c)&&/used/i.test(c))return"Used & Renewed";if(/refurb|renewed/i.test(c))return"Renewed";if(/used/i.test(c))return"Used";return"New"};
+
+let st={lsort:"az",mode:(()=>{try{return localStorage.getItem("mk.mode")==="services"?"services":"shop"}catch(_){return"shop"}})(),view:{t:"home"},q:"",dept:"",openAlts:{},f:{},sort:"featured",shown:48};
+
+const top=it=>[...(it.picks||[])].sort((a,b)=>(a.rank||99)-(b.rank||99))[0];
+const listPicks=l=>l.items.map(top).filter(Boolean);
+const isCartoon=p=>/cartoon stand-in/i.test(p?.why||"");
+const listTop=l=>{const ps=listPicks(l);return ps.find(p=>p.image&&!isCartoon(p))||ps.find(p=>p.image)||ps[0]};
+const priceNum=p=>typeof p?.price==="number"?p.price:null;
+const money=n=>"$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const minPrice=l=>{const n=listPicks(l).map(priceNum).filter(x=>x!=null);return n.length?Math.min(...n):null};
+const total=l=>listPicks(l).map(priceNum).filter(x=>x!=null).reduce((a,b)=>a+b,0);
+const itemCount=()=>S.lists.reduce((a,l)=>a+l.items.length,0);
+
+function iconTile(label){const ch=(label||"?").trim()[0]?.toUpperCase()||"?";return `<span class="icon" style="background:${hue(label)}">${esc(ch)}</span>`}
+function img(src,alt,label){return src?`<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy">`:iconTile(label||alt)}
+function priceHtml(p){
+  const n=priceNum(p);
+  if(n==null)return `<div class="price"><span class="txt">${esc(p.priceText||"See price")}</span></div>`;
+  const [w,c]=n.toFixed(2).split(".");
+  return `<div class="price"><span class="sym">$</span><span class="whole">${Number(w).toLocaleString("en-US")}</span><span class="cents">${c}</span></div>`;
+}
+
+/* ---------- header ---------- */
+const smile=`<svg width="58" height="10" viewBox="0 0 58 10" aria-hidden="true" style="margin-left:-62px;margin-bottom:-6px"><path d="M2 2 Q29 12 54 3" stroke="#ff9900" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M49 1 L55 3 L51 7" stroke="#ff9900" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+function renderHead(){
+  const shop=st.mode==="shop";
+  const opts=shop?ALLD.map(d=>[d.id,d.name]):svcCats().map(c=>[c,c]);
+  $("#head").innerHTML=`
+    <button class="logo" type="button" data-act="home" aria-label="WishlistMarket home"><span class="word">WishlistMarket</span>${smile}</button>
+    <div class="loc"><small>${shop?"Deliver to you":"Services near"}</small><b>Your area</b></div>
+    <form class="search" id="sform" role="search">
+      <select id="sdept" aria-label="Department"><option value="">${shop?"All Departments":"All Services"}</option>${opts.map(([v,t])=>`<option value="${esc(v)}" ${v===st.dept?"selected":""}>${esc(t)}</option>`).join("")}</select>
+      <input id="sq" type="search" value="${esc(st.q)}" placeholder="${shop?"Search your lists and items":"Search providers and services"}" aria-label="Search">
+      <button type="submit" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f1111" stroke-width="2.4" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.6-4.6"/></svg></button>
+    </form>
+    <div class="modes" role="group" aria-label="Section">
+      <button type="button" data-mode="shop" aria-pressed="${shop}">Shopping</button>
+      <button type="button" data-mode="services" aria-pressed="${!shop}">Services</button>
+    </div>
+    <button type="button" class="acct" data-view="${shop?"projects":"sprojects"}"><small>Hello</small><b>${shop?"Your Projects":"Your Searches"}</b></button>`;
+  const v=st.view;const cur=(t,id)=>v.t===t&&(id===undefined||v.id===id)?'aria-current="true"':"";
+  $("#subnav").innerHTML=shop?
+    `<button type="button" data-act="home" ${cur("home")}>☰ All</button>`+
+    ALLD.map(d=>`<button type="button" data-dept="${esc(d.id)}" ${cur("dept",d.id)}>${esc(d.name)}</button>`).join("")+
+    `<span class="sep"></span><button type="button" data-view="lists" ${cur("lists")}>All Lists</button><button type="button" data-view="items" ${cur("items")}>All Items</button><button type="button" data-view="projects" ${cur("projects")}>Projects</button>`+reqNav(cur)
+    :`<button type="button" data-act="home" ${cur("home")}>☰ All</button>`+
+    svcCats().map(c=>`<button type="button" data-scat="${esc(c)}" ${cur("scat",c)}>${esc(c)}</button>`).join("")+
+    `<span class="sep"></span><button type="button" data-view="searches" ${cur("searches")}>All Searches</button><button type="button" data-view="places" ${cur("places")}>All Places</button><button type="button" data-view="sprojects" ${cur("sprojects")}>Projects</button>`+reqNav(cur);
+}
+const RQ=()=>st.mode==="shop"?"requests":"svc_requests";
+const CMD=()=>st.mode==="shop"?"process my Shopping Desk requests":"process my Services Desk requests";
+function reqNav(cur){const n=S[RQ()].filter(r=>r.status!=="done").length;
+  return `<button type="button" data-view="requests" ${cur("requests")}>Requests${n?`<span class="cnt">${n}</span>`:""}</button><button type="button" class="ask" data-ask="1">Ask Claude to update</button>`}
+const svcCats=()=>[...new Set(S.svc_searches.map(x=>x.category).filter(Boolean))].sort();
+
+/* ---------- tiles ---------- */
+function listTile(l){
+  const n=l.items.length,tp=listTop(l),mp=minPrice(l);
+  return `<button type="button" class="tile" data-list="${esc(l.id)}">
+    <span class="pic">${img(tp?.image,tp?.name||l.title,l.title)}<span class="badge">${n} item${n===1?"":"s"}</span></span>
+    <span class="t">${esc(l.title)}</span>
+    ${tp?`<span class="tp"><b>Top pick:</b> ${esc(tp.name)}</span>`:""}
+    <span class="st">${esc(storesText(l))}</span>
+    ${mp!=null?`<span class="m">From ${money(mp)}</span>`:""}
+  </button>`;
+}
+function projLists(id){return S.lists.filter(l=>l.projectId===id)}
+function projTile(p){
+  const ls=projLists(p.id),items=ls.reduce((a,l)=>a+l.items.length,0);
+  const first=ls.map(listTop).find(x=>x?.image)||null;
+  return `<button type="button" class="tile" data-proj="${esc(p.id)}">
+    <span class="pic">${img(first?.image,p.name,p.name)}<span class="badge">${ls.length} list${ls.length===1?"":"s"}</span></span>
+    <span class="t">${esc(p.name)}</span>
+    <span class="tp">${esc(p.description||"")}</span>
+    <span class="m">${items} items · ${esc([...new Set(ls.flatMap(l=>l.storeIds))].map(storeName).join(", "))}</span>
+  </button>`;
+}
+const tileGrid=html=>`<div class="tiles">${html.map(h=>`<div class="cardt">${h}</div>`).join("")}</div>`;
+
+/* ---------- shopping views ---------- */
+function shopHome(){
+  return `<section class="hero"><div><h1>Your shopping lists, ready to compare</h1><p>Each list shows its top pick. Open a list to see every item, the price, stock and the runner-up options.</p></div>
+    <div class="stats">
+      <button type="button" class="stat" data-view="lists"><b>${S.lists.length}</b><span>lists</span><em>See all ›</em></button>
+      <button type="button" class="stat" data-view="items"><b>${itemCount()}</b><span>items</span><em>See all ›</em></button>
+      <button type="button" class="stat" data-view="projects"><b>${S.projects.length}</b><span>projects</span><em>See all ›</em></button>
+    </div></section>`+allListsPage(true);
+}
+function facetBlock(title,key,vals){
+  if(vals.length<2)return"";
+  return `<div><h3>${esc(title)}</h3><button type="button" data-f="${key}" data-fv="" aria-pressed="${!st.f[key]}">Any</button>${vals.map(([v,n])=>`<button type="button" data-f="${key}" data-fv="${esc(v)}" aria-pressed="${st.f[key]===v}">${esc(v)} <small>(${n})</small></button>`).join("")}</div>`;
+}
+function mobileFacets(groups){
+  return `<div class="facets-m">${groups.flatMap(([title,key,vals])=>vals.length<2?[]:vals.map(([v])=>`<button type="button" class="chip" data-f="${key}" data-fv="${st.f[key]===v?"":esc(v)}" aria-pressed="${st.f[key]===v}">${esc(v)}</button>`)).join("")}</div>`;
+}
+const countBy=(arr,fn)=>{const m=new Map();for(const x of arr)for(const k of [].concat(fn(x)))m.set(k,(m.get(k)||0)+1);return [...m]};
+/* Lists browser, used for one department or for all 38 lists. */
+function listBrowser(dept){
+  const base=dept?dept.subs.flatMap(([,ids])=>ids).map(id=>LI[id]).filter(Boolean):S.lists;
+  const f=st.f;
+  const pass=(l,skip)=>(skip==="sub"||!f.sub||L2D[l.id].sub===f.sub)&&(skip==="dept"||!f.dept||L2D[l.id].d.name===f.dept)&&(skip==="store"||!f.store||l.storeIds.map(storeName).includes(f.store))&&(skip==="cond"||!f.cond||cond(l)===f.cond);
+  const groups=[
+    dept?["Category","sub",countBy(base.filter(l=>pass(l,"sub")),l=>L2D[l.id].sub)]:["Department","dept",countBy(base.filter(l=>pass(l,"dept")),l=>L2D[l.id].d.name)],
+    ["Store","store",countBy(base.filter(l=>pass(l,"store")),l=>l.storeIds.map(storeName))],
+    ["Condition","cond",countBy(base.filter(l=>pass(l,"cond")),cond)]];
+  const ls=base.filter(l=>pass(l));
+  const title=dept?dept.name:"All lists";
+  let body="";
+  const secs=dept?dept.subs.map(([s,ids])=>[s,ids.map(id=>LI[id]).filter(l=>l&&ls.includes(l))]):ALLD.map(d=>[d.name,d.subs.flatMap(([,ids])=>ids).map(id=>LI[id]).filter(l=>l&&ls.includes(l)),d.id]);
+  for(const [name,arr,did] of secs){if(arr.length)body+=`<section class="subsec"><h2>${did?`<button type="button" class="more" style="font-size:18px;font-weight:700;color:var(--ink)" data-dept="${esc(did)}">${esc(name)} ›</button>`:esc(name)}</h2>${tileGrid(arr.map(listTile))}</section>`}
+  return crumbs([[title]])+
+  `<div class="refine"><aside class="facets" aria-label="Filters">${groups.map(g=>facetBlock(...g)).join("")}</aside><div>
+    ${mobileFacets(groups)}
+    <div class="resbar"><span><b>${ls.length}</b> list${ls.length===1?"":"s"} in <b>${esc(title)}</b>${Object.values(f).some(Boolean)?` · <button type="button" class="more" data-clear="1">Clear filters</button>`:""}</span><span class="note">Pictures show each list's top pick</span></div>
+    ${body||`<div class="empty">No lists match those filters.</div>`}
+  </div></div>`;
+}
+/* All lists: one flat grid, store-front tabs on top, a sort menu. "Recently viewed" is kept in this browser only. */
+const STORE_COLORS={amazon:"#232f3e",walmart:"#0071dc","best-buy":"#0046be",offerup:"#00a87e",wayfair:"#7f187f"};
+let viewed={};try{viewed=JSON.parse(localStorage.getItem("mk.viewed")||"{}")||{}}catch(_){}
+const markViewed=id=>{viewed[id]=Date.now();try{localStorage.setItem("mk.viewed",JSON.stringify(viewed))}catch(_){}};
+const SORTS=[["az","Name: A to Z"],["za","Name: Z to A"],["viewed","Recently viewed"],["updated","Recently updated"],["created","Recently created"],["type","Type (department)"],["low","Price: Low to High"],["high","Price: High to Low"],["items","Most items"]];
+function allListsPage(home){
+  const store=st.f.store||"";
+  const counts=countBy(S.lists,l=>l.storeIds);
+  let ls=S.lists.filter(l=>!store||l.storeIds.includes(store));
+  const byName=(a,b)=>a.title.localeCompare(b.title)||storesText(a).localeCompare(storesText(b));
+  const time=s=>s?Date.parse(s)||0:0;
+  const srt=st.lsort||"az";
+  const cmp={az:byName,za:(a,b)=>-byName(a,b),viewed:(a,b)=>(viewed[b.id]||0)-(viewed[a.id]||0)||byName(a,b),
+    updated:(a,b)=>time(b.updatedAt)-time(a.updatedAt)||byName(a,b),created:(a,b)=>time(b.createdAt)-time(a.createdAt)||byName(a,b),
+    type:(a,b)=>ALLD.indexOf(L2D[a.id].d)-ALLD.indexOf(L2D[b.id].d)||L2D[a.id].sub.localeCompare(L2D[b.id].sub)||byName(a,b),
+    low:(a,b)=>(minPrice(a)??1e9)-(minPrice(b)??1e9)||byName(a,b),high:(a,b)=>(minPrice(b)??-1)-(minPrice(a)??-1)||byName(a,b),
+    items:(a,b)=>b.items.length-a.items.length||byName(a,b)}[srt];
+  ls=[...ls].sort(cmp);
+  const nViewed=S.lists.filter(l=>viewed[l.id]).length;
+  const tab=(id,name,n)=>`<button type="button" data-f="store" data-fv="${esc(id)}" aria-pressed="${store===id}"><span class="sl" style="background:${id?STORE_COLORS[id]||hue(id):"#565959"}">${esc((name||"All")[0])}</span>${esc(name||"All stores")} <small>${n}</small></button>`;
+  return (home?"":crumbs([["All lists"]]))+
+  `<div class="storetabs" role="group" aria-label="Store fronts">${tab("","",S.lists.length)}${S.stores.map(s=>tab(s.id,s.name,(counts.find(c=>c[0]===s.id)||[0,0])[1])).join("")}</div>
+  <div class="resbar"><span><b>${ls.length}</b> list${ls.length===1?"":"s"}${store?` at <b>${esc(storeName(store))}</b>`:""}${srt==="viewed"&&!nViewed?` · <span class="note">You haven't opened any lists yet, so these are A to Z</span>`:""}</span>
+  <label>Sort by <select id="lsort">${SORTS.map(([v,n])=>`<option value="${v}" ${v===srt?"selected":""}>${n}</option>`).join("")}</select></label></div>
+  ${ls.length?tileGrid(ls.map(listTile)):`<div class="empty">No lists at this store yet.</div>`}`;
+}
+function allItems(){
+  const f=st.f;const rows=[];
+  for(const l of S.lists)for(const it of l.items){const p=top(it);if(p)rows.push({it,l,p})}
+  const pass=(r,skip)=>(skip==="dept"||!f.dept||L2D[r.l.id].d.name===f.dept)&&(skip==="store"||!f.store||storeName(r.p.store)===f.store)&&(skip==="avail"||!f.avail||(AV[r.p.availability||"unknown"])===f.avail);
+  const groups=[["Department","dept",countBy(rows.filter(r=>pass(r,"dept")),r=>L2D[r.l.id].d.name)],["Store","store",countBy(rows.filter(r=>pass(r,"store")),r=>storeName(r.p.store))],["Availability","avail",countBy(rows.filter(r=>pass(r,"avail")),r=>AV[r.p.availability||"unknown"])]];
+  let out=rows.filter(r=>pass(r));
+  if(st.sort==="low")out.sort((a,b)=>(priceNum(a.p)??1e9)-(priceNum(b.p)??1e9));
+  if(st.sort==="high")out.sort((a,b)=>(priceNum(b.p)??-1)-(priceNum(a.p)??-1));
+  const shown=out.slice(0,st.shown);
+  return crumbs([["All items"]])+
+  `<div class="refine"><aside class="facets" aria-label="Filters">${groups.map(g=>facetBlock(...g)).join("")}</aside><div>
+    ${mobileFacets(groups)}
+    <div class="resbar"><span>1–${shown.length} of <b>${out.length}</b> items${Object.values(f).some(Boolean)?` · <button type="button" class="more" data-clear="1">Clear filters</button>`:""}</span>
+    <label>Sort by <select id="sort"><option value="featured" ${st.sort==="featured"?"selected":""}>Featured</option><option value="low" ${st.sort==="low"?"selected":""}>Price: Low to High</option><option value="high" ${st.sort==="high"?"selected":""}>Price: High to Low</option></select></label></div>
+    <div class="grid">${shown.map(r=>productCard(r.it,r.l,true)).join("")}</div>
+    ${out.length>shown.length?`<div class="showmore"><button type="button" class="btn" data-moreitems="1">Show ${Math.min(48,out.length-shown.length)} more</button></div>`:""}
+  </div></div>`;
+}
+function projectsPage(){
+  return crumbs([["Projects"]])+`<div class="resbar"><span><b>${S.projects.length}</b> projects · <span class="note">Pictures show the top pick from each project's first list</span></span><button type="button" class="btn ghost" style="margin:0" data-newproj="1">New project</button></div>`+tileGrid(S.projects.map(projTile));
+}
+function projectPage(p){
+  const ls=projLists(p.id);
+  return crumbs([["Projects",'data-view="projects"'],[p.name]])+`<section class="listhead"><h1>${esc(p.name)}</h1><p>${esc(p.description||"")}</p><div class="chips"><span class="chip">${ls.length} lists</span><span class="chip">${ls.reduce((a,l)=>a+l.items.length,0)} items</span></div></section>`+tileGrid(ls.map(listTile));
+}
+function productCard(it,l,showList){
+  const ps=[...(it.picks||[])].sort((a,b)=>(a.rank||99)-(b.rank||99));
+  const p=ps[0];if(!p)return"";
+  const rest=ps.slice(1);const key=l.id+"/"+it.id;const open=st.openAlts[key];
+  const generic=/^Listed on /.test(p.why||"");
+  const av=p.availability||"unknown";
+  return `<article class="card">
+    <a class="pic" href="${esc(p.url||"#")}" target="_blank" rel="noopener">${img(p.image,p.name,it.need)}${p.suggestedAlt?`<span class="flag alt">Suggested alternative</span>`:(ps.length>1?`<span class="flag">Top pick</span>`:"")}</a>
+    <span class="need">${esc(it.need)}</span>
+    ${p.url?`<a class="name" href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.name)}</a>`:`<span class="name">${esc(p.name)}</span>`}
+    ${p.brand?`<span class="brand">Brand: ${esc(p.brand)}</span>`:""}
+    ${priceHtml(p)}
+    <span class="stock ${esc(av)}">${esc(AV[av]||av)}</span>
+    <span class="where">From ${esc(storeName(p.store))}${p.checkedAt?" · checked "+esc(fmtDate(p.checkedAt)):""}</span>
+    ${showList?`<span class="where">On list: <button type="button" data-list="${esc(l.id)}">${esc(l.title)}</button></span>`:""}
+    ${!generic&&p.why?`<span class="why">${esc(p.why)}</span>`:""}
+    ${(p.prosGeneral||[]).length?`<ul class="pc">${p.prosGeneral.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+    ${(p.consGeneral||[]).length?`<ul class="pc c">${p.consGeneral.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+    ${it.notes?`<span class="note">${esc(it.notes)}</span>`:""}
+    ${rest.length?`<button type="button" class="more" data-alts="${esc(key)}">${open?"Hide":"Show"} ${rest.length} other option${rest.length>1?"s":""}</button>`:""}
+    ${rest.length&&open?`<div class="alts">${rest.map(r=>`<div class="alt">${r.image?`<img src="${esc(r.image)}" alt="" loading="lazy">`:`<span></span>`}<div><a href="${esc(r.url||"#")}" target="_blank" rel="noopener">${esc(r.name)}</a><div>${esc(r.priceText||"")} · ${esc(storeName(r.store))}${r.availability&&r.availability!=="in_stock"?" · "+esc(AV[r.availability]||""):""}</div></div></div>`).join("")}</div>`:""}
+    ${p.url?`<a class="btn" href="${esc(p.url)}" target="_blank" rel="noopener">See it on ${esc(storeName(p.store))} ›</a>`:`<span class="btn ghost">No link saved</span>`}
+  </article>`;
+}
+function listPage(l){
+  const loc=L2D[l.id],proj=P[l.projectId];
+  const picks=listPicks(l),priced=picks.filter(p=>priceNum(p)!=null);
+  const inStock=picks.filter(p=>p.availability==="in_stock").length;
+  const flagged=picks.filter(p=>p.availability&&!["in_stock","unknown"].includes(p.availability)).length;
+  return crumbs([[loc.d.name,`data-dept="${esc(loc.d.id)}"`],[loc.sub,`data-dept="${esc(loc.d.id)}" data-sub="${esc(loc.sub)}"`],[l.title]])+
+  `<section class="listhead"><h1>${esc(l.title)}</h1><p>${esc(l.summary||"")}</p><div class="chips"><span class="chip">${esc(loc.d.name)} › ${esc(loc.sub)}</span>${proj?`<button type="button" class="chip" data-proj="${esc(proj.id)}">Project: ${esc(proj.name)}</button>`:""}${l.storeIds.map(s=>`<span class="chip">${esc(storeName(s))}</span>`).join("")}<span class="chip">${esc(cond(l))}</span><span class="chip">Updated ${esc(fmtDate(l.updatedAt))}</span></div>${manage("lists",l.id,l.projectId,S.projects,"this list")}</section>
+  <div class="layout"><div class="grid">${l.items.map(it=>productCard(it,l)).join("")}</div>
+  <aside class="side"><div class="box">
+    <div class="sum">Subtotal (${priced.length} item${priced.length===1?"":"s"}): <b>${money(total(l))}</b></div><div class="note">Top pick for each item. Runner-ups not counted.</div>
+    <dl class="kv" style="margin-top:10px"><dt>In stock</dt><dd><span class="ok">${inStock}</span> of ${picks.length}</dd>${flagged?`<dt>Needs a look</dt><dd style="color:var(--bad);font-weight:700">${flagged}</dd>`:""}<dt>Stores</dt><dd>${l.storeIds.map(s=>ST[s]?.url?`<a href="${esc(ST[s].url)}" target="_blank" rel="noopener">${esc(storeName(s))}</a>`:esc(storeName(s))).join(", ")}</dd></dl>
+  </div>
+  ${proj?`<div class="box"><h3>More in ${esc(proj.name)}</h3><div style="display:flex;flex-direction:column;gap:6px">${projLists(proj.id).filter(x=>x.id!==l.id).map(x=>`<button type="button" class="more" data-list="${esc(x.id)}">${esc(x.title)}</button>`).join("")||'<span class="note">This is the only list here.</span>'}</div></div>`:""}
+  </aside></div>`;
+}
+function shopSearch(q,deptId){
+  const ql=q.toLowerCase();const d=DI[deptId];
+  const inD=l=>!d||L2D[l.id].d===d;
+  const lists=S.lists.filter(l=>inD(l)&&(!ql||[l.title,l.full,l.summary,L2D[l.id].sub,L2D[l.id].d.name].join(" ").toLowerCase().includes(ql)));
+  const hits=[];
+  for(const l of S.lists){if(!inD(l))continue;for(const it of l.items){const p=top(it);if(!p)continue;
+    if(!ql||[it.need,p.name,p.brand,storeName(p.store)].join(" ").toLowerCase().includes(ql))hits.push([it,l])}}
+  return crumbs([[q?`Results for “${q}”`:d?.name||"Search"]])+
+    `<div class="resbar"><span><b>${lists.length}</b> list${lists.length===1?"":"s"} and <b>${hits.length}</b> item${hits.length===1?"":"s"}${q?` for “${esc(q)}”`:""}${d?` in ${esc(d.name)}`:""}</span></div>`+
+    (lists.length?`<section class="shelf"><div class="shelf-h"><h2>Lists</h2></div><div class="row">${lists.map(listTile).join("")}</div></section>`:"")+
+    (hits.length?`<div class="grid">${hits.slice(0,96).map(([it,l])=>productCard(it,l,true)).join("")}</div>`:lists.length?"":`<div class="empty">Nothing in your lists matches that. Try a shorter word.</div>`);
+}
+
+/* ---------- services ---------- */
+function firstImg(s){for(const n of s.needs||[])for(const r of n.results||[]){const im=r.image||PV[r.providerId]?.image;if(im)return im}return""}
+function topResult(s){const rs=(s.needs||[]).flatMap(n=>n.results||[]).sort((a,b)=>(a.rank||99)-(b.rank||99));return rs[0]}
+function svcTile(s){
+  const n=(s.needs||[]).reduce((a,x)=>a+(x.results||[]).length,0),tr=topResult(s);
+  return `<button type="button" class="tile" data-svc="${esc(s.id)}"><span class="pic">${img(firstImg(s),s.title,s.title)}<span class="badge">${n} place${n===1?"":"s"}</span></span><span class="t">${esc(s.title)}</span>${tr?`<span class="tp"><b>Top pick:</b> ${esc(tr.name)}</span>`:""}<span class="m">${esc(s.category||"")} · ${esc(s.area||"")}</span></button>`;
+}
+function sprojTile(p){
+  const ss=S.svc_searches.filter(s=>s.projectId===p.id);const im=ss.map(firstImg).find(Boolean);
+  return `<button type="button" class="tile" data-sproj="${esc(p.id)}"><span class="pic">${img(im,p.name,p.name)}<span class="badge">${ss.length} search${ss.length===1?"":"es"}</span></span><span class="t">${esc(p.name)}</span><span class="tp">${esc(p.description||"")}</span></button>`;
+}
+function allPlaces(){const seen=new Set(),out=[];for(const s of S.svc_searches)for(const n of s.needs||[])for(const r of n.results||[]){const k=r.providerId||r.name;if(seen.has(k))continue;seen.add(k);out.push(r)}return out}
+function svcHome(){
+  let h=`<section class="hero"><div><h1>Services near you, compared</h1><p>Local services near you. Each search ranks what it found by cost, fit and quality.</p></div>
+  <div class="stats">
+    <button type="button" class="stat" data-view="searches"><b>${S.svc_searches.length}</b><span>searches</span><em>See all ›</em></button>
+    <button type="button" class="stat" data-view="places"><b>${allPlaces().length}</b><span>places</span><em>See all ›</em></button>
+    <button type="button" class="stat" data-view="sprojects"><b>${S.svc_projects.length}</b><span>projects</span><em>See all ›</em></button>
+  </div></section>`;
+  for(const p of S.svc_projects){const ss=S.svc_searches.filter(s=>s.projectId===p.id);if(ss.length)h+=`<section class="shelf"><div class="shelf-h"><h2>${esc(p.name)}</h2><p>${esc(p.description||"")}</p><button class="all" type="button" data-sproj="${esc(p.id)}">See all</button></div><div class="row">${ss.map(svcTile).join("")}</div></section>`}
+  const other=S.svc_searches.filter(s=>!SP[s.projectId]);
+  if(other.length)h+=`<section class="shelf"><div class="shelf-h"><h2>Other searches</h2></div><div class="row">${other.map(svcTile).join("")}</div></section>`;
+  return h;
+}
+function resCard(r){
+  const pv=PV[r.providerId]||{};
+  const im=r.image||pv.image;const sp=r.scoreParts||{};
+  const phone=r.phone||pv.phone,addr=r.address||pv.address,url=r.url||pv.url;
+  return `<article class="res">
+    <div class="pic">${img(im,r.name,r.name)}${r.rank===1?`<span class="flag">Top pick</span>`:""}</div>
+    <div class="body">
+      <div><h3>${url?`<a href="${esc(url)}" target="_blank" rel="noopener" style="color:inherit">${esc(r.name)}</a>`:esc(r.name)}</h3><div class="note">${r.full&&r.full!==r.name?esc(r.full)+" · ":""}${esc(r.kind||pv.type||"")}</div></div>
+      ${r.score!=null?`<div class="score"><span class="big">${esc(r.score)}<small style="font-size:13px;font-weight:400;color:var(--muted)"> / 10</small></span><span class="bars">${["cost","fit","quality"].filter(k=>sp[k]!=null).map(k=>`<span class="bar">${k}<i><u style="width:${sp[k]*10}%"></u></i>${sp[k]}</span>`).join("")}</span></div>`:""}
+      ${r.why?`<div class="why">${esc(r.why)}</div>`:""}
+      <dl class="kv">
+        ${r.costText?`<dt>Cost</dt><dd>${esc(r.costText)}</dd>`:""}
+        ${r.acceptingNew!=null?`<dt>New patients</dt><dd>${r.acceptingNew?'<span class="ok">Accepting</span>':'<span style="color:var(--bad);font-weight:700">Not listed as accepting</span>'}</dd>`:""}
+        ${r.distanceText?`<dt>Distance</dt><dd>${esc(r.distanceText)}</dd>`:""}
+        ${r.hours?`<dt>Hours</dt><dd>${esc(r.hours)}</dd>`:""}
+        ${addr?`<dt>Address</dt><dd>${esc(addr)}</dd>`:""}
+        ${phone?`<dt>Phone</dt><dd class="tel">${esc(phone)}</dd>`:""}
+      </dl>
+      ${(r.prosGeneral||[]).length||(r.consGeneral||[]).length?`<div class="cols">${(r.prosGeneral||[]).length?`<div><b style="font-size:13px">Good</b><ul class="pc">${r.prosGeneral.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}${(r.consGeneral||[]).length?`<div><b style="font-size:13px">Watch for</b><ul class="pc c">${r.consGeneral.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}</div>`:""}
+      ${r.vsList?`<div class="note"><b>Compared with the others:</b> ${esc(r.vsList)}</div>`:""}
+      ${r.toConfirm?`<div class="note"><b>Ask when you call:</b> ${esc(r.toConfirm)}</div>`:""}
+      ${r.verified?`<div class="note">${esc(r.verified)}${r.checkedAt?" · checked "+esc(fmtDate(r.checkedAt)):""}</div>`:""}
+      ${url?`<div><a class="btn" href="${esc(url)}" target="_blank" rel="noopener" style="margin-top:4px">Visit their website ›</a></div>`:""}
+    </div></article>`;
+}
+function svcPage(s){
+  const proj=SP[s.projectId];
+  return crumbs([proj?[proj.name,`data-sproj="${esc(proj.id)}"`]:null,[s.title]].filter(Boolean))+
+  `<section class="listhead"><h1>${esc(s.title)}</h1><p>${esc(s.summary||"")}</p><div class="chips"><span class="chip">${esc(s.category||"")}</span><span class="chip">${esc(s.area||"")}</span>${(s.criteria||[]).map(c=>`<span class="chip">${esc(c)}</span>`).join("")}</div>${s.mapsUrl?`<div style="margin-top:10px"><a href="${esc(s.mapsUrl)}" target="_blank" rel="noopener">Open this search in Google Maps ›</a></div>`:""}${manage("svc_searches",s.id,s.projectId,S.svc_projects,"this search")}</section>`+
+  (s.needs||[]).map(n=>`<h2 class="needh">${esc(n.need)}${n.notes?`<small>${esc(n.notes)}</small>`:""}</h2><div class="results">${[...(n.results||[])].sort((a,b)=>(a.rank||99)-(b.rank||99)).map(resCard).join("")}</div>`).join("");
+}
+function svcGroup(title,desc,ss,back){
+  return crumbs([back,[title]].filter(Boolean))+`<section class="listhead"><h1>${esc(title)}</h1>${desc?`<p>${esc(desc)}</p>`:""}</section>`+tileGrid(ss.map(svcTile));
+}
+function svcSearch(q,cat){
+  const ql=q.toLowerCase();const hits=[];
+  for(const s of S.svc_searches){if(cat&&s.category!==cat)continue;for(const n of s.needs||[])for(const r of n.results||[]){
+    if(!ql||[r.name,r.kind,r.address,n.need,s.title,r.why].join(" ").toLowerCase().includes(ql))hits.push(r)}}
+  return crumbs([[q?`Results for “${q}”`:cat]])+`<div class="resbar"><span><b>${hits.length}</b> place${hits.length===1?"":"s"}${q?` for “${esc(q)}”`:""}${cat?` in ${esc(cat)}`:""}</span></div>`+
+    (hits.length?`<div class="results">${hits.map(resCard).join("")}</div>`:`<div class="empty">No places match that. Try a shorter word.</div>`);
+}
+
+function manage(col,id,pid,projs,what){
+  return `<div class="manage"><label>Project <select id="assign" data-col="${col}" data-id="${esc(id)}"><option value="">Unassigned</option>${projs.map(p=>`<option value="${esc(p.id)}" ${p.id===pid?"selected":""}>${esc(p.name)}</option>`).join("")}</select></label>
+    <button type="button" class="btn" data-ask="1">Ask Claude to update ${what}</button></div>`}
+function targetLabel(r){
+  if(r.targetType==="list")return "List: "+(LI[r.targetId]?.title||"removed list");
+  if(r.targetType==="search")return "Search: "+(S.svc_searches.find(s=>s.id===r.targetId)?.title||"removed search");
+  if(r.targetType==="project")return "Project: "+((st.mode==="shop"?P:SP)[r.targetId]?.name||"removed project");
+  return "General request"}
+function requestsPage(){
+  const R=[...S[RQ()]].sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||"")));
+  return crumbs([["Requests"]])+`<section class="listhead"><h1>Requests for Claude</h1><p>Save a change you want here, then tell Claude in chat to “${esc(CMD())}”. Claude does the research, updates the ${st.mode==="shop"?"list":"search"} and marks the request done.</p>
+    <div class="manage"><button type="button" class="btn" data-ask="1">New request</button><button type="button" class="btn ghost" data-copycmd="1">Copy chat command</button></div></section>`+
+    (R.length?`<div class="reqs">${R.map(r=>`<div class="req ${r.status==="done"?"done":""}"><span class="status">${r.status==="done"?"Done":"Waiting for Claude"}</span>
+      <span class="note">${esc(targetLabel(r))}${r.createdAt?" · "+esc(fmtDate(r.createdAt)):""}</span><div>${esc(r.text)}</div>${r.response?`<div class="note"><b>Claude:</b> ${esc(r.response)}</div>`:""}
+      <button type="button" class="btn ghost" data-delreq="${esc(r.id)}">${r.status==="done"?"Remove":"Cancel request"}</button></div>`).join("")}</div>`
+     :`<div class="empty">No requests yet. Use “Ask Claude to update” to save one.</div>`);
+}
+function crumbs(parts){
+  return `<nav class="crumbs" aria-label="Breadcrumb"><button type="button" data-act="home">${st.mode==="shop"?"Shopping":"Services"}</button>${parts.map(([t,a])=>`<span>›</span>${a?`<button type="button" ${a}>${esc(t)}</button>`:`<span>${esc(t)}</span>`}`).join("")}</nav>`;
+}
+
+function render(){
+  renderHead();
+  const v=st.view;let h="";
+  if(!ready){$("#main").innerHTML=`<div class="loading">Loading your WishlistMarket…</div>`;return}
+  if(!DB&&!ready){$("#main").innerHTML=`<div class="empty">Sign in to claude.ai to see your lists and searches. This page keeps them in its own saved data, which needs a signed-in viewer.</div>`;return}
+  if(v.t==="requests"){$("#main").innerHTML=requestsPage();return}
+  if(st.mode==="shop"){
+    if(v.t==="search")h=shopSearch(st.q,st.dept);
+    else if(v.t==="list"&&LI[v.id])h=listPage(LI[v.id]);
+    else if(v.t==="dept"&&DI[v.id])h=listBrowser(DI[v.id]);
+    else if(v.t==="lists")h=allListsPage();
+    else if(v.t==="items")h=allItems();
+    else if(v.t==="projects")h=projectsPage();
+    else if(v.t==="proj"&&P[v.id])h=projectPage(P[v.id]);
+    else h=shopHome();
+  }else{
+    if(v.t==="search")h=svcSearch(st.q,st.dept);
+    else if(v.t==="svc"){const s=S.svc_searches.find(x=>x.id===v.id);h=s?svcPage(s):svcHome()}
+    else if(v.t==="sproj"&&SP[v.id]){const p=SP[v.id];h=svcGroup(p.name,p.description,S.svc_searches.filter(s=>s.projectId===v.id),["Projects",'data-view="sprojects"'])}
+    else if(v.t==="scat")h=svcGroup(v.id,"",S.svc_searches.filter(s=>s.category===v.id));
+    else if(v.t==="searches")h=svcGroup("All searches","",S.svc_searches);
+    else if(v.t==="places"){const pl=allPlaces();h=crumbs([["All places"]])+`<div class="resbar"><span><b>${pl.length}</b> places across ${S.svc_searches.length} searches</span></div><div class="results">${pl.map(resCard).join("")}</div>`}
+    else if(v.t==="sprojects")h=crumbs([["Projects"]])+`<div class="resbar"><span><b>${S.svc_projects.length}</b> projects</span><button type="button" class="btn ghost" style="margin:0" data-newproj="1">New project</button></div>`+tileGrid(S.svc_projects.map(sprojTile));
+    else h=svcHome();
+  }
+  $("#main").innerHTML=h;
+  const on=document.querySelector(".storetabs [aria-pressed=\"true\"]");if(on){const bar=on.parentElement;bar.scrollLeft=Math.max(0,on.offsetLeft-bar.offsetLeft-16)}
+}
+function navState(){return{mk:1,view:st.view,f:st.f,mode:st.mode,dept:st.dept,q:st.q}}
+function pushNav(){try{history.pushState(navState(),"")}catch(_){}}
+function go(view,f,fromPop){if(view.t==="list")markViewed(view.id);st.view=view;st.f=f||{};st.shown=48;if(view.t!=="search")st.q="";if(!fromPop)pushNav();render();window.scrollTo({top:0})}
+try{history.replaceState(navState(),"")}catch(_){}
+addEventListener("popstate",e=>{const s=e.state;if(!s||!s.mk)return;st.mode=s.mode||st.mode;st.dept=s.dept||"";if(s.view.t==="search"){st.q=s.q||"";st.view=s.view;st.f=s.f||{};render();window.scrollTo({top:0});return}go(s.view,s.f,true)});
+const keep=()=>{const y=window.scrollY;render();window.scrollTo({top:y})};
+
+document.addEventListener("click",e=>{
+  const t=e.target.closest("button");if(!t)return;
+  const d=t.dataset;
+  if(d.mode){st.mode=d.mode;st.dept="";try{localStorage.setItem("mk.mode",d.mode)}catch(_){}go({t:"home"});return}
+  if(d.close){$("#"+d.close).close();return}
+  if(d.ask){openAsk();return}
+  if(d.copycmd){copyText(CMD(),"Copied. Paste it in your chat with Claude.");return}
+  if(d.newproj){if(!DB)return toast("This copy is read-only");$("#projDlg").showModal();$("#projName").focus();return}
+  if(d.delreq){if(!DB)return;DB.doc(RQ()+"/"+d.delreq).delete().then(()=>toast("Request removed"),err=>toast("Could not remove it: "+(err.message||err.code)));return}
+  if(d.act==="home"){st.dept="";go({t:"home"});return}
+  if(d.f!==undefined){st.f={...st.f,[d.f]:d.fv||""};st.shown=48;keep();return}
+  if(d.clear){st.f={};keep();return}
+  if(d.moreitems){st.shown+=48;keep();return}
+  if(d.alts){st.openAlts[d.alts]=!st.openAlts[d.alts];keep();return}
+  if(d.dept){go({t:"dept",id:d.dept},d.sub?{sub:d.sub}:{});return}
+  if(d.scat){go({t:"scat",id:d.scat});return}
+  if(d.view){go({t:d.view});return}
+  if(d.proj){go({t:"proj",id:d.proj});return}
+  if(d.sproj){go({t:"sproj",id:d.sproj});return}
+  if(d.list){go({t:"list",id:d.list});return}
+  if(d.svc){go({t:"svc",id:d.svc});return}
+});
+document.addEventListener("change",e=>{
+  if(e.target.id==="assign"){const x=e.target;if(!DB)return toast("This copy is read-only");const pid=x.value||null;
+    DB.doc(x.dataset.col+"/"+x.dataset.id).update({projectId:pid,updatedAt:new Date().toISOString()}).then(()=>toast(pid?"Moved to "+((x.dataset.col==="lists"?P:SP)[pid]?.name||"project"):"Removed from its project"),err=>toast("Could not move it: "+(err.message||err.code)));return}if(e.target.id==="sort"){st.sort=e.target.value;keep()}if(e.target.id==="lsort"){st.lsort=e.target.value;keep()}});
+document.addEventListener("submit",e=>{
+  if(e.target.id!=="sform")return;e.preventDefault();
+  st.q=$("#sq").value.trim();st.dept=$("#sdept").value;
+  if(!st.q&&st.dept&&st.mode==="shop"){go({t:"dept",id:st.dept});return}
+  if(!st.q&&!st.dept){go({t:"home"});return}
+  st.view={t:"search"};pushNav();render();window.scrollTo({top:0});
+});
+function toast(m){const t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
+async function copyText(s,msg){try{await navigator.clipboard.writeText(s);toast(msg)}catch(_){toast(s)}}
+function openAsk(){
+  if(!DB)return toast("This copy is read-only");
+  const shop=st.mode==="shop",v=st.view;
+  const opts=[["general:","General request"]]
+    .concat(shop?S.lists.map(l=>["list:"+l.id,"List: "+l.title+(l.storeIds.length?" ("+storesText(l)+")":"")]):S.svc_searches.map(s=>["search:"+s.id,"Search: "+s.title]))
+    .concat((shop?S.projects:S.svc_projects).map(p=>["project:"+p.id,"Project: "+p.name]));
+  $("#askTarget").innerHTML=opts.map(([v,n])=>`<option value="${esc(v)}">${esc(n)}</option>`).join("");
+  $("#askTarget").value=v.t==="list"?"list:"+v.id:v.t==="svc"?"search:"+v.id:(v.t==="proj"||v.t==="sproj")?"project:"+v.id:"general:";
+  $("#askHelp").textContent=`Your request is saved here. Then tell Claude in chat to “${CMD()}” and it will research and make the change.`;
+  $("#askText").placeholder=shop?"Swap the drill picks for cordless ones under $120 and add Lowe's":"Find dentists open Saturdays and drop anyone farther than 20 miles";
+  $("#askDlg").showModal();$("#askText").focus();
+}
+$("#askForm").addEventListener("submit",async e=>{
+  e.preventDefault();const text=$("#askText").value.trim();if(!text)return;
+  const [targetType,targetId]=$("#askTarget").value.split(/:(.*)/);
+  try{await DB.collection(RQ()).add({text,targetType,targetId:targetId||null,status:"open",createdAt:new Date().toISOString()});
+    $("#askDlg").close();$("#askText").value="";toast(`Saved. Say “${CMD()}” in chat.`)}
+  catch(err){toast("Could not save: "+(err.message||err.code))}
+});
+$("#projForm").addEventListener("submit",async e=>{
+  e.preventDefault();const name=$("#projName").value.trim();if(!name)return;
+  const id=name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60)||("project-"+Date.now());
+  try{await DB.collection(st.mode==="shop"?"projects":"svc_projects").doc(id).set({name,description:$("#projDesc").value.trim(),createdAt:new Date().toISOString()});
+    $("#projDlg").close();$("#projName").value="";$("#projDesc").value="";toast("Project created")}
+  catch(err){toast("Could not create it: "+(err.message||err.code))}
+});
+
+render();
+/* Live data: every collection streams in, and the page redraws in place when Claude saves changes. */
+let pend=0;
+const redraw=()=>{if(pend)return;pend=requestAnimationFrame(()=>{pend=0;derive();if(document.activeElement?.id==="sq")return renderMainOnly();keep()})};
+function renderMainOnly(){const y=window.scrollY;const a=$("#sq"),val=a.value,pos=a.selectionStart;render();const b=$("#sq");if(b){b.value=val;b.focus();try{b.setSelectionRange(pos,pos)}catch(_){}}window.scrollTo({top:y})}
+(async()=>{
+  try{DB=window.claude?await window.claude.use("db"):null}catch(_){DB=null}
+  if(!DB){try{const r=await fetch("data.json",{cache:"no-cache"});const j=await r.json();for(const c of Object.keys(RAW))RAW[c]=j[c]||[]}catch(e){toast("Could not load data")}ready=true;derive();render();return}
+  const cols=Object.keys(RAW),waiting=new Set(cols);
+  for(const c of cols)DB.collection(c).onSnapshot(snap=>{
+    RAW[c]=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(waiting.delete(c)&&!waiting.size){ready=true;derive();render();return}
+    if(ready)redraw()},
+    err=>{waiting.delete(c);if(!waiting.size&&!ready){ready=true;derive();render()}toast("Could not load "+c+": "+(err.message||err.code))});
+})();
+})();
+</script>
+<script src="settings.js" defer></script>

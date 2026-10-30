@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hire AI shoppers · WishlistMarket</title>
+<meta name="description" content="Hire AI shoppers to research products and build your lists: cloud AI with your own key, or a free model on your own computer.">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#131921">
+<style>
+  :root { --bg:#eaeded; --card:#fff; --ink:#0f1111; --muted:#565959; --line:#d5d9d9; --chip:#f0f2f2; --head:#131921; --head2:#232f3e;
+          --btn:#ffd814; --btn-line:#fcd200; --btn-ink:#0f1111; --accent:#febd69; --link:#007185; --bad:#b12704; --good:#067d62; --warn:#c45500;
+          --stamp:#067d62; --code:#f7fafa; }
+  :root[data-theme="dark"] { --bg:#0f1418; --card:#1a2128; --ink:#e8eaed; --muted:#a7b0b8; --line:#2e3740; --chip:#232c34; --link:#5cc8d9;
+          --bad:#ff7a66; --good:#4cc29e; --warn:#ffab5c; --stamp:#4cc29e; --code:#11181d; }
+  :root[data-text="large"] body { font-size:17px; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; }
+  a { color:var(--link); }
+  header { background:var(--head); color:#fff; padding:10px 16px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  header .logo { color:#fff; text-decoration:none; font-weight:700; font-size:20px; }
+  header .who { margin-left:auto; font-size:13px; color:#ccc; }
+  header .who a { color:#fff; }
+  .sub { background:var(--head2); color:#fff; padding:6px 16px; font-size:13px; display:flex; gap:16px; flex-wrap:wrap; }
+  .sub a { color:#fff; text-decoration:none; } .sub a:hover { text-decoration:underline; }
+  main { max-width:1100px; margin:0 auto; padding:16px; }
+  h1 { font-size:26px; margin:6px 0 4px; font-weight:600; }
+  .lead { color:var(--muted); margin:0 0 16px; max-width:760px; }
+  section.block { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; margin-bottom:16px; }
+  section.block > h2 { font-size:20px; margin:0 0 4px; }
+  section.block > .note { color:var(--muted); margin:0 0 14px; font-size:14px; max-width:780px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px; }
+  .cv { border:1px solid var(--line); border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:8px; background:var(--card); position:relative; }
+  .cv h3 { margin:0; font-size:16px; }
+  .cv .tag { color:var(--muted); font-size:13px; margin:0; }
+  .cv ul { margin:0; padding-left:18px; font-size:13px; }
+  .cv .cost { font-size:12px; color:var(--muted); margin:0; }
+  .cv .acts { margin-top:auto; display:flex; gap:8px; flex-wrap:wrap; }
+  .badges { display:flex; gap:6px; flex-wrap:wrap; }
+  .badge { font-size:11px; font-weight:700; border-radius:999px; padding:2px 8px; background:var(--chip); color:var(--ink); white-space:nowrap; }
+  .badge.good { background:#e3f4ef; color:#05634e; } .badge.warn { background:#fdf0e1; color:#8a3c00; } .badge.lead { background:var(--accent); color:#0f1111; }
+  :root[data-theme="dark"] .badge.good { background:#173a31; color:#7fe0c0; } :root[data-theme="dark"] .badge.warn { background:#3d2a17; color:#ffc58a; }
+  button, .btn { font:inherit; font-size:14px; padding:8px 14px; border-radius:999px; border:1px solid var(--btn-line); background:var(--btn); color:var(--btn-ink); cursor:pointer; min-height:38px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+  button.plain, .btn.plain { background:var(--card); color:var(--ink); border-color:var(--line); }
+  button.bad { background:var(--card); color:var(--bad); border-color:var(--bad); }
+  button:disabled { opacity:.55; cursor:wait; }
+  label.f { display:flex; flex-direction:column; gap:4px; font-size:13px; font-weight:700; }
+  label.f small, .small { font-weight:400; color:var(--muted); font-size:12px; }
+  input, select, textarea { font:inherit; font-size:15px; padding:8px 10px; border:1px solid #888c8c; border-radius:6px; background:var(--card); color:var(--ink); width:100%; min-height:40px; }
+  :root[data-theme="dark"] input, :root[data-theme="dark"] select, :root[data-theme="dark"] textarea { border-color:var(--line); }
+  input:focus, select:focus, textarea:focus { outline:2px solid #e77600; border-color:#e77600; }
+  .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px 12px; align-items:end; }
+  .msg { font-size:14px; min-height:1.2em; margin:6px 0 0; }
+  .msg.bad { color:var(--bad); } .msg.good { color:var(--good); }
+  .msg .hint { display:block; color:var(--muted); font-size:13px; }
+  code, pre { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:13px; }
+  pre { background:var(--code); border:1px solid var(--line); border-radius:6px; padding:8px 10px; white-space:pre-wrap; word-break:break-word; margin:4px 0; }
+  ol.steps { margin:6px 0; padding-left:20px; font-size:14px; } ol.steps li { margin:4px 0; }
+  .team-empty { color:var(--muted); font-size:14px; grid-column:1 / -1; margin:0; }
+  .member { border:1px solid var(--line); border-radius:10px; padding:12px; display:flex; gap:12px; align-items:flex-start; }
+  .member .ava { flex:none; width:42px; height:42px; border-radius:50%; display:grid; place-items:center; font-weight:800; color:#0f1111; background:var(--accent); font-size:16px; }
+  .member .body { flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; }
+  .member .body b { font-size:15px; }
+  .member .acts { display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
+  .member .acts button { min-height:32px; padding:4px 12px; font-size:13px; }
+  .team { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:10px; }
+  .stamp { position:absolute; top:10px; right:10px; transform:rotate(8deg); border:2px solid var(--stamp); color:var(--stamp); font-weight:900; letter-spacing:.08em; padding:1px 8px; border-radius:4px; font-size:13px; }
+  .suggest-form { display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto; gap:10px; align-items:end; }
+  .seg { display:flex; gap:6px; flex-wrap:wrap; }
+  .seg label { border:1px solid var(--line); border-radius:999px; padding:6px 12px; font-size:14px; cursor:pointer; display:flex; gap:6px; align-items:center; font-weight:400; }
+  .seg input { position:absolute; opacity:0; pointer-events:none; width:auto; min-height:0; }
+  .seg label:has(input:checked) { border-color:var(--ink); background:var(--chip); font-weight:700; }
+  .seg label:has(input:focus-visible) { outline:2px solid var(--link); }
+  .machine { margin:12px 0 8px; font-size:14px; }
+  .notes { background:var(--chip); border-radius:8px; padding:10px 12px; font-size:13px; margin:12px 0 0; }
+  .notes ul { margin:0; padding-left:18px; }
+  dialog { border:0; padding:0; border-radius:12px; width:min(640px,calc(100vw - 32px)); max-height:calc(100dvh - 48px); background:var(--card); color:var(--ink); box-shadow:0 20px 60px rgba(0,0,0,.35); }
+  dialog::backdrop { background:rgba(15,17,17,.55); }
+  dialog .hd { display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--card); }
+  dialog .hd h2 { margin:0; font-size:19px; }
+  dialog .x { background:none; border:0; color:var(--ink); font-size:26px; line-height:1; padding:4px 8px; min-height:0; }
+  dialog .bd { padding:14px 18px 18px; display:flex; flex-direction:column; gap:12px; overflow:auto; }
+  .tabs { display:flex; gap:6px; flex-wrap:wrap; }
+  .tabs button { min-height:32px; padding:4px 12px; background:var(--card); color:var(--ink); border-color:var(--line); }
+  .tabs button[aria-selected="true"] { background:var(--chip); border-color:var(--ink); font-weight:700; }
+  .result { margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+  .result .item { border-top:1px solid var(--line); padding-top:8px; display:grid; grid-template-columns:28px 1fr auto; gap:8px; font-size:14px; }
+  .result .item .rk { font-weight:800; color:var(--muted); }
+  .result .item .pr { font-weight:700; white-space:nowrap; }
+  .progress { list-style:none; padding:0; margin:8px 0 0; font-size:14px; }
+  .progress li::before { content:"✓ "; color:var(--good); } .progress li.now::before { content:"… "; color:var(--warn); }
+  footer { color:var(--muted); font-size:12px; text-align:center; padding:8px 16px 32px; }
+  .hidden { display:none !important; }
+  @media (max-width:760px) {
+    .suggest-form { grid-template-columns:1fr 1fr; }
+    .suggest-form .wide { grid-column:1 / -1; }
+    main { padding:12px; }
+    dialog { width:100vw; max-width:100vw; max-height:100dvh; height:100dvh; border-radius:0; margin:0; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="/" aria-label="WishlistMarket home">WishlistMarket</a>
+  <div class="who" id="who"></div>
+</header>
+<nav class="sub" aria-label="Page sections">
+  <a href="/">← Back to the market</a>
+  <a href="#team">Your team</a>
+  <a href="#suggest">Suggest a local shopper</a>
+  <a href="#cloud">Cloud shoppers</a>
+  <a href="#local">Local shoppers</a>
+  <a href="#helpers">Search helpers</a>
+  <a href="#try">Try your shopper</a>
+</nav>
+<main>
+  <h1>Hire AI shoppers</h1>
+  <p class="lead">Your shoppers research products, check every link and build your lists. Hire a cloud shopper with your own key, or run one free and private on your own computer. Your lead shopper does your lists unless you pick another.</p>
+
+  <section class="block" id="team" aria-labelledby="team-h">
+    <h2 id="team-h">Your team</h2>
+    <p class="note">The lead shopper builds and updates your lists. Keys stay in this browser, or encrypted in your account if you choose that.</p>
+    <div class="team" id="team-list"></div>
+  </section>
+
+  <section class="block" id="suggest" aria-labelledby="suggest-h">
+    <h2 id="suggest-h">Suggest a local shopper</h2>
+    <p class="note">Tell us your graphics card and we'll hire the 3 local models that do shopping lists well on it: following the list format, picking only real search results, and ranking sensibly.</p>
+    <div class="seg" role="radiogroup" aria-label="Computer type" style="margin-bottom:10px">
+      <label><input type="radio" name="kind" value="pc" checked> PC with a graphics card</label>
+      <label><input type="radio" name="kind" value="mac"> Mac (Apple silicon)</label>
+    </div>
+    <form id="suggest-form" class="suggest-form" autocomplete="off">
+      <label class="f wide" id="gpu-f"><span>Graphics card</span><input id="gpu" list="gpu-list" placeholder="e.g. RTX 4070, RX 7900 XTX, Arc B580"><datalist id="gpu-list"></datalist></label>
+      <label class="f" id="vram-f"><span>Graphics memory</span><select id="vram"><option value="">From the card</option></select></label>
+      <label class="f"><span id="ram-l">System memory</span><select id="ram"></select></label>
+      <label class="f" id="os-f"><span>System</span><select id="os"><option value="windows">Windows</option><option value="linux">Linux</option></select></label>
+      <button type="submit" id="suggest-btn">Find and hire my top 3</button>
+    </form>
+    <p class="msg" id="suggest-msg" role="status"></p>
+    <div id="suggest-out"></div>
+  </section>
+
+  <section class="block" id="cloud" aria-labelledby="cloud-h">
+    <h2 id="cloud-h">Cloud shoppers</h2>
+    <p class="note">They run on the AI company's servers with your own key, so they work from any device, your phone too. Most popular first.</p>
+    <div class="grid" id="cloud-list"></div>
+  </section>
+
+  <section class="block" id="local" aria-labelledby="local-h">
+    <h2 id="local-h">Local shoppers</h2>
+    <p class="note">Free and private: the model runs on your own computer. Use this site from a browser on that computer.</p>
+    <div class="grid" id="local-list"></div>
+    <div class="notes" id="local-notes"></div>
+  </section>
+
+  <section class="block" id="helpers" aria-labelledby="helpers-h">
+    <h2 id="helpers-h">Search helpers</h2>
+    <p class="note">Gemini, OpenAI, Claude, Grok, Perplexity and OpenRouter search the web themselves. Every other shopper (DeepSeek, Mistral, Groq, local models, other servers) needs a search helper to find product pages. Hire one; Tavily is free for 1,000 searches a month.</p>
+    <div class="grid" id="helper-list"></div>
+  </section>
+
+  <section class="block" id="try" aria-labelledby="try-h">
+    <h2 id="try-h">Try your shopper</h2>
+    <p class="note" id="try-who">Hire a shopper first.</p>
+    <form id="try-form">
+      <label class="f"><span>What should they shop for?</span><textarea id="try-req" rows="2" maxlength="600" placeholder="e.g. A quiet USB microphone for video calls under $60"></textarea></label>
+      <div class="row" style="margin-top:8px">
+        <label class="f"><span>How many items</span><select id="try-count"><option>5</option><option selected>10</option></select></label>
+        <label class="f" id="try-save-f"><span>&nbsp;</span><span style="font-weight:400;display:flex;gap:6px;align-items:center"><input type="checkbox" id="try-save" style="width:auto;min-height:0"> Save it to my lists</span></label>
+        <div><button type="submit" id="try-btn">Send my lead shopper</button></div>
+      </div>
+    </form>
+    <ul class="progress" id="try-progress"></ul>
+    <p class="msg" id="try-msg" role="status"></p>
+    <div class="result" id="try-out"></div>
+  </section>
+</main>
+<footer id="foot"></footer>
+<dialog id="dlg" aria-labelledby="dlg-h"><div class="hd"><h2 id="dlg-h"></h2><button type="button" class="x" data-close aria-label="Close">×</button></div><div class="bd" id="dlg-bd"></div></dialog>
+<script src="/settings.js" defer></script>
+<script type="module" src="/shoppers/hire.js"></script>
+</body>
+</html>

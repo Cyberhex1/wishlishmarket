@@ -1,0 +1,12 @@
+# Cloudflare Pages settings for WishlistMarket (read by `wrangler pages deploy`).
+name = "wishlistmarket"
+pages_build_output_dir = "public"
+compatibility_date = "2026-10-01"
+
+# User accounts (accounts/schema.sql). Secrets are set with
+# `npx wrangler pages secret put NAME --project-name wishlistmarket`, never here:
+#   ACCOUNTS_SECRET  32+ random characters; encrypts users' saved AI keys
+[[d1_databases]]
+binding = "DB"
+database_name = "wishlistmarket-accounts"
+database_id = "your-d1-database-id"  # from `npx wrangler d1 create wishlistmarket-accounts`
