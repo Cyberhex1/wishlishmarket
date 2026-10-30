@@ -1,6 +1,17 @@
+<p align="center"><img src="assets/icon.png" alt="WishlistMarket icon" width="128"></p>
+
 # WishlistMarket
 
-A shopping-list and local-services site for Cloudflare Pages, with user accounts and bring-your-own-key AI shoppers.
+WishlistMarket turns shopping research into clean, comparable lists. Each list holds ranked picks with prices, stock status, pros and cons, a value score and the runner-up options, shown in a familiar store-style layout with departments, store tabs and sorting. A Services side does the same for local providers such as vets, dentists or plumbers.
+
+Lists are built and refreshed by AI shoppers that you "hire" with your own key: Gemini, OpenAI, Claude, Grok, Perplexity, OpenRouter, DeepSeek, Mistral, Groq or Ollama Cloud, or a free local model (Ollama, LM Studio) running in your own browser. A built-in helper looks at your graphics card and suggests the three local models that fit it best. Every pick is link-checked, and shoppers may only choose from real search results, so lists don't fill up with made-up products. There is no shared AI key: user accounts store each person's own key encrypted, and agent tokens let a user's own AI agent edit their lists.
+
+Built with plain HTML and JavaScript on Cloudflare Pages, Pages Functions and D1.
+
+![Shopping lists](assets/screenshot.png)
+![Hire AI shoppers](assets/screenshot-hire.png)
+
+## Repo guide
 
 - `public/` is the site: `index.html`, `data.json` (a small sample data set; put your own snapshot here, with any photos under `img/`). `_headers` asks search engines not to index it.
 - `functions/api/[[path]].js` + `app.js`, `lib.js`, `agent.js`, `providers/` and `search/` serve the AI backend under `/api/` (providers, shoppers, key-check, models, ask, search, agent/find-products, agent/rebuild-list, agent/finish). There is no shared AI key: each user sends their own key in the `X-AI-Key` header, or saves it in their account.
