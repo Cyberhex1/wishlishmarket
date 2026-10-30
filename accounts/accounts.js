@@ -11,6 +11,7 @@
 //   POST   /api/auth/signup          { email, password, name?, invite? }
 //   POST   /api/auth/login           { email, password }
 //   POST   /api/auth/logout          ?all=1 signs out every device
+//   GET    /api/auth/config          { signups, can_save_keys } for the sign-up page
 //   GET    /api/me                   who am I, saved agents, tokens
 //   PATCH  /api/me                   { name }
 //   POST   /api/me/password          { current, password }
@@ -23,6 +24,8 @@
 //   GET    /api/me/tokens            agent tokens
 //   POST   /api/me/tokens            { name, scope: "read"|"write" } -> token shown once
 //   DELETE /api/me/tokens/:id
+//   GET    /api/me/sessions          devices signed in to this account (this one has current: true)
+//   DELETE /api/me/sessions/:id      sign that device out
 //   GET    /api/data                 everything, in the data.json shape
 //   POST   /api/data/import          data.json shape, ?replace=1 clears first
 //   GET    /api/data/:col            all docs in a collection
@@ -518,7 +521,7 @@ async function meRoute(req, env, who, parts) {
   const D = db(env);
   // Agent tokens can read the account but not manage it.
   const user = requireUser(who, req.method !== "GET");
-  if (who.via === "token" && (sub === "tokens" || sub === "agents" || sub === "password" || req.method !== "GET")) {
+  if (who.via === "token" && (sub === "tokens" || sub === "agents" || sub === "password" || sub === "sessions" || req.method !== "GET")) {
     throw new HttpError(403, "Agent tokens can't change account settings; sign in on the site instead");
   }
 
@@ -614,6 +617,24 @@ async function meRoute(req, env, who, parts) {
     return json({ deleted: arg }, 200);
   }
 
+  if (sub === "sessions") {
+    // Devices are named by the first 16 characters of their session hash.
+    if (!arg) {
+      if (req.method !== "GET") throw new HttpError(405, "use GET");
+      const { results } = await D.prepare(
+        "SELECT id, created_at, last_seen, user_agent FROM sessions WHERE user_id = ?1 AND expires_at > ?2 ORDER BY last_seen DESC")
+        .bind(user.id, now()).all();
+      return json({ sessions: results.map(r => ({ id: r.id.slice(0, 16), created_at: r.created_at, last_seen: r.last_seen,
+        user_agent: r.user_agent, current: r.id === who.sessionId })) }, 200);
+    }
+    if (req.method !== "DELETE") throw new HttpError(405, "use DELETE");
+    if (!/^[A-Za-z0-9_-]{16}$/.test(arg)) throw new HttpError(404, "Device not found");
+    const r = await D.prepare("DELETE FROM sessions WHERE user_id = ?1 AND substr(id, 1, 16) = ?2").bind(user.id, arg).run();
+    if (!r.meta?.changes) throw new HttpError(404, "Device not found");
+    const self = who.sessionId.slice(0, 16) === arg;
+    return json({ deleted: arg, signed_out: self }, 200, self ? { "Set-Cookie": sessionCookie(req, "", 0) } : {});
+  }
+
   throw new HttpError(404, "not found");
 }
 
@@ -633,6 +654,11 @@ export async function handle(req, env) {
       if (action === "signup" || action === "login" || action === "logout") {
         if (req.method !== "POST") throw new HttpError(405, "use POST");
         checkOrigin(req, { via: "session" });
+      }
+      if (action === "config") {
+        if (req.method !== "GET") throw new HttpError(405, "use GET");
+        const signups = ["open", "invite", "closed"].includes(env.SIGNUPS) ? env.SIGNUPS : "open";
+        return json({ signups: env.DB ? signups : "closed", accounts: !!env.DB, can_save_keys: (env.ACCOUNTS_SECRET || "").length >= 32 }, 200);
       }
       if (action === "signup") return await signup(req, env);
       if (action === "login") return await login(req, env);

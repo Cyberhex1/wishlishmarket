@@ -2,333 +2,473 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Your account · WishlistMarket</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your Account · WishlistMarket</title>
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#131921">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;700&display=swap">
 <style>
-  :root { --bg:#eaeded; --card:#fff; --ink:#0f1111; --muted:#565959; --line:#d5d9d9; --head:#131921; --head2:#232f3e;
-          --btn:#ffd814; --btn-line:#fcd200; --link:#007185; --bad:#b12704; --good:#067d62; }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; }
-  header { background:var(--head); color:#fff; padding:10px 16px; display:flex; align-items:center; gap:12px; }
-  header a { color:#fff; text-decoration:none; font-weight:700; font-size:20px; }
-  header .who { margin-left:auto; font-size:13px; color:#ccc; text-align:right; }
-  .sub { background:var(--head2); color:#fff; padding:6px 16px; font-size:13px; }
-  .sub a { color:#fff; }
-  main { max-width:760px; margin:0 auto; padding:16px; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:16px; margin-bottom:14px; }
-  h1 { font-size:24px; margin:4px 0 12px; font-weight:500; }
-  h2 { font-size:18px; margin:0 0 8px; }
-  p.note { color:var(--muted); margin:4px 0 12px; font-size:13px; }
-  label { display:block; font-weight:600; font-size:13px; margin:10px 0 4px; }
-  input, select { width:100%; padding:9px 10px; border:1px solid #888c8c; border-radius:6px; font:inherit; background:#fff; }
-  input:focus, select:focus { outline:2px solid #e77600; border-color:#e77600; }
-  .row { display:flex; gap:10px; flex-wrap:wrap; }
-  .row > * { flex:1 1 200px; }
-  button { font:inherit; padding:8px 14px; border-radius:20px; border:1px solid var(--btn-line); background:var(--btn); cursor:pointer; margin-top:12px; }
-  button.plain { background:#fff; border-color:var(--line); }
-  button.danger { background:#fff; border-color:var(--bad); color:var(--bad); }
-  button:disabled { opacity:.6; cursor:wait; }
-  .tabs { display:flex; gap:6px; margin-bottom:6px; }
-  .tabs button { margin:0; background:#fff; border-color:var(--line); }
-  .tabs button[aria-selected="true"] { background:var(--btn); border-color:var(--btn-line); }
-  .msg { margin-top:10px; font-size:14px; min-height:1em; }
-  .msg.bad { color:var(--bad); } .msg.good { color:var(--good); }
-  ul.items { list-style:none; padding:0; margin:8px 0 0; }
-  ul.items li { display:flex; align-items:center; gap:10px; padding:8px 0; border-top:1px solid #eee; flex-wrap:wrap; }
-  ul.items li .grow { flex:1 1 200px; }
-  ul.items li button { margin:0; padding:4px 12px; }
-  .small { font-size:12px; color:var(--muted); }
-  code.token { display:block; word-break:break-all; background:#f7fafa; border:1px dashed #888c8c; padding:10px; border-radius:6px; margin-top:8px; font-size:13px; }
-  .hidden { display:none !important; }
-  .counts { display:flex; flex-wrap:wrap; gap:8px; margin:6px 0; }
-  .counts span { background:#f0f2f2; border-radius:12px; padding:2px 10px; font-size:13px; }
-  details summary { cursor:pointer; color:var(--link); margin-top:8px; }
+/* Same look as the market page: dark header with search, department strip, white cards on grey. */
+:root{
+  color-scheme:light;
+  --font:"Arimo",Arial,Helvetica,sans-serif;
+  --bg:#e3e6e6;--card:#fff;--ink:#0f1111;--muted:#565959;--line:#d5d9d9;
+  --head:#131921;--headInk:#fff;--sub:#232f3e;--subInk:#fff;
+  --accent:#febd69;--btn:#ffd814;--btnLine:#fcd200;--btnInk:#0f1111;
+  --link:#007185;--good:#067d62;--bad:#b12704;--warn:#c45500;--chip:#f0f2f2;--radius:8px;--field:#888c8c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.45}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--head)}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline;color:var(--bad)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+[hidden]{display:none!important}
+
+/* header */
+.top{background:var(--head);color:var(--headInk);position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
+.top .wrap{max-width:1400px;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding-block:8px}
+.logo{border:1px solid transparent;color:var(--headInk);display:flex;padding:4px 6px;border-radius:3px}
+.logo:hover{border-color:var(--headInk);text-decoration:none;color:var(--headInk)}
+.logo span{position:relative;font-weight:700;font-size:25px;letter-spacing:-.5px;line-height:1;padding-bottom:7px}
+.logo svg{position:absolute;right:2px;bottom:-2px}
+.search{display:flex;flex:1 1 320px;min-width:0;height:40px;border-radius:6px;overflow:hidden;background:#fff}
+.search input{flex:1;min-width:0;border:0;padding:0 12px;font:inherit;font-size:15px;color:#0f1111;background:#fff}
+.search button{border:0;width:46px;background:var(--accent);display:grid;place-items:center}
+.sub{background:var(--sub);color:var(--subInk)}
+.sub .wrap{max-width:1400px;display:flex;gap:2px;overflow-x:auto;padding-block:4px;scrollbar-width:none}
+.sub .wrap::-webkit-scrollbar{display:none}
+.sub a{border:1px solid transparent;color:var(--subInk);white-space:nowrap;padding:6px 9px;border-radius:3px;font-size:14px}
+.sub a:hover{border-color:currentColor;text-decoration:none;color:var(--subInk)}
+.sub a[aria-current="page"]{font-weight:700;border-color:currentColor}
+@media (max-width:700px){
+  .top .wrap{display:grid;grid-template-columns:auto minmax(0,1fr) auto}
+  .top .wrap .search{grid-column:1/-1;grid-row:2}
+  .top .wrap .wm-acct-box{grid-column:3;grid-row:1}
+  .top .wm-tools{display:none}
+  .logo span{font-size:21px}
+}
+
+main{padding-block:18px 56px}
+.crumbs{font-size:13px;color:var(--muted);margin-bottom:8px;display:flex;gap:6px;flex-wrap:wrap}
+.crumbs a{color:var(--link)}
+h1{font-size:28px;font-weight:400;margin:0 0 4px;line-height:1.2}
+.lead{color:var(--muted);margin:0 0 18px}
+.loading{padding:60px 0;text-align:center;color:var(--muted)}
+
+/* hub */
+.hub{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.tile{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;
+  color:var(--ink);text-align:left;min-height:104px;width:100%;font:inherit}
+.tile:hover{background:var(--chip);text-decoration:none;color:var(--ink)}
+.tile .ic{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--chip);color:var(--sub)}
+.tile:hover .ic{background:var(--card)}
+.tile h2{margin:0 0 3px;font-size:17px;font-weight:400}
+.tile p{margin:0;color:var(--muted);font-size:13.5px}
+.tile p b{color:var(--ink);font-weight:700}
+@media (max-width:900px){.hub{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.hub{grid-template-columns:1fr;gap:10px}.tile{min-height:0;padding:14px}h1{font-size:24px}}
+
+/* section pages */
+.page{max-width:720px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:16px}
+.panel>h2{margin:0;padding:14px 18px 0;font-size:18px}
+.panel>.note{margin:4px 18px 0;color:var(--muted);font-size:13px}
+.prow{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:14px 18px;border-top:1px solid var(--line);flex-wrap:wrap}
+.panel>.prow:first-child{border-top:0}
+.panel>h2+.prow,.panel>.note+.prow{margin-top:10px}
+.prow .k{font-weight:700}
+.prow .v{color:var(--ink);word-break:break-word}
+.prow .grow{flex:1 1 240px;min-width:0}
+.prow .sm{font-size:12.5px;color:var(--muted)}
+.edit{padding:14px 18px 18px;border-top:1px solid var(--line);background:var(--chip)}
+.edit:first-child{border-top:0}
+label.f{display:block;font-weight:700;font-size:13px;margin:12px 0 4px}
+label.f:first-child{margin-top:0}
+input.t,select.t{width:100%;max-width:420px;height:36px;padding:4px 9px;font:inherit;font-size:14px;color:var(--ink);background:var(--card);border:1px solid var(--field);border-radius:4px}
+input.t:focus,select.t:focus{outline:0;border-color:#e77600;box-shadow:0 0 3px 2px rgba(228,121,17,.5)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;max-width:560px}
+.row2 input.t,.row2 select.t{max-width:none}
+@media (max-width:520px){.row2{grid-template-columns:1fr}}
+.btn{display:inline-flex;justify-content:center;align-items:center;gap:6px;border:1px solid var(--btnLine);background:var(--btn);color:var(--btnInk);
+  border-radius:100px;padding:7px 16px;font-size:13.5px;font-weight:400;text-decoration:none;white-space:nowrap}
+.btn:hover{filter:brightness(.95);text-decoration:none;color:var(--btnInk)}
+.btn.plain{background:var(--card);border-color:var(--line);color:var(--ink);box-shadow:0 2px 5px rgba(15,17,17,.08)}
+.btn.danger{background:var(--card);border-color:#e3b5ad;color:var(--bad)}
+.btn.danger.solid{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn:disabled{opacity:.55;cursor:default}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.msg{font-size:13px;min-height:0;margin:8px 0 0}
+.msg:empty{display:none}
+.msg.good{color:var(--good)}.msg.bad{color:var(--bad)}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:3px;background:var(--good);color:#fff;vertical-align:1px;margin-left:6px}
+.tag.grey{background:var(--chip);color:var(--muted)}
+.counts{display:flex;flex-wrap:wrap;gap:8px;padding:12px 18px 0}
+.counts span{background:var(--chip);border-radius:100px;padding:3px 11px;font-size:13px}
+code.token{display:block;word-break:break-all;background:var(--card);border:1px dashed var(--field);padding:10px;border-radius:6px;margin-top:8px;font-size:13px}
+pre.ex{background:var(--chip);border-radius:6px;padding:10px 12px;overflow-x:auto;font-size:12.5px;margin:10px 18px 16px}
+.empty{padding:14px 18px;color:var(--muted);border-top:1px solid var(--line)}
+.danger-zone{border-color:#e3b5ad}
+.danger-zone>h2{color:var(--bad)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--card);padding:10px 16px;border-radius:100px;font-size:14px;z-index:40;max-width:calc(100vw - 32px)}
 </style>
 </head>
 <body>
-<header>
-  <a href="/" aria-label="WishlistMarket home">WishlistMarket</a>
-  <div class="who" id="who"></div>
-</header>
-<div class="sub"><a href="/">← Back to the market</a></div>
-<main>
-  <!-- Signed out -->
-  <section id="out" class="card hidden">
-    <h1 id="out-title">Sign in</h1>
-    <div class="tabs" role="tablist">
-      <button role="tab" id="tab-in" aria-selected="true">Sign in</button>
-      <button role="tab" id="tab-up" aria-selected="false">Create account</button>
-    </div>
-    <form id="auth-form" autocomplete="on">
-      <div id="name-row" class="hidden"><label for="f-name">Your name</label><input id="f-name" autocomplete="name" maxlength="80"></div>
-      <label for="f-email">Email</label><input id="f-email" type="email" autocomplete="email" required>
-      <label for="f-pass">Password</label><input id="f-pass" type="password" autocomplete="current-password" minlength="8" required>
-      <p class="note hidden" id="pass-note">At least 8 characters.</p>
-      <div id="invite-row" class="hidden"><label for="f-invite">Invite code</label><input id="f-invite" autocomplete="off"></div>
-      <button type="submit" id="auth-btn">Sign in</button>
-      <div class="msg" id="auth-msg" role="status"></div>
-    </form>
-  </section>
+<header class="top"><div class="wrap" id="head">
+  <a class="logo" href="/" aria-label="WishlistMarket home"><span>WishlistMarket<svg width="58" height="10" viewBox="0 0 58 10" aria-hidden="true"><path d="M2 2 Q29 12 54 3" stroke="#ff9900" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M49 1 L55 3 L51 7" stroke="#ff9900" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+  <form class="search" role="search" action="/" method="get">
+    <input name="q" type="search" placeholder="Search your lists and items" aria-label="Search">
+    <button type="submit" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f1111" stroke-width="2.4" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.6-4.6"/></svg></button>
+  </form>
+  <div data-wm-acct></div>
+</div></header>
+<nav class="sub" aria-label="Site"><div class="wrap">
+  <a href="/">☰ All lists</a>
+  <a href="/?view=projects">Your projects</a>
+  <a href="/?view=items">All items</a>
+  <a href="/hire">AI shoppers</a>
+  <a href="/account" aria-current="page">Your Account</a>
+</div></nav>
 
-  <!-- Signed in -->
-  <div id="in" class="hidden">
-    <h1>Your account</h1>
+<main class="wrap" id="main"><div class="loading">Loading your account…</div></main>
 
-    <section class="card">
-      <h2>Your lists</h2>
-      <p class="note">Your lists, projects and services are saved to your account.</p>
-      <div class="counts" id="counts"></div>
-      <div class="row">
-        <button id="import-btn">Copy the WishlistMarket lists into my account</button>
-        <button class="plain" id="export-btn">Download my data</button>
-      </div>
-      <div class="msg" id="data-msg" role="status"></div>
-    </section>
-
-    <section class="card">
-      <h2>Your AI</h2>
-      <p class="note">Plug in your own AI so it can find products and build or update your lists. Your key is stored encrypted and is never shown again; only its last 4 characters are.</p>
-      <ul class="items" id="agents"></ul>
-      <form id="agent-form">
-        <div class="row">
-          <div><label for="a-provider">AI provider</label><select id="a-provider"></select></div>
-          <div><label for="a-model">Model (optional)</label><input id="a-model" placeholder="Leave blank for the default"></div>
-        </div>
-        <label for="a-key">API key</label><input id="a-key" type="password" autocomplete="off" spellcheck="false">
-        <p class="note" id="key-link"></p>
-        <button type="submit">Save my AI key</button>
-        <div class="msg" id="agent-msg" role="status"></div>
-      </form>
-    </section>
-
-    <section class="card">
-      <h2>Agent tokens</h2>
-      <p class="note">Give one of these to an AI agent you run yourself so it can read or edit your lists through the WishlistMarket API. Send it as <code>Authorization: Bearer &lt;token&gt;</code>. Agents can't change your account settings.</p>
-      <ul class="items" id="tokens"></ul>
-      <form id="token-form">
-        <div class="row">
-          <div><label for="t-name">Name</label><input id="t-name" placeholder="e.g. My shopping agent" maxlength="80"></div>
-          <div><label for="t-scope">Access</label><select id="t-scope"><option value="write">Read and edit my lists</option><option value="read">Read only</option></select></div>
-        </div>
-        <button type="submit">Make a token</button>
-        <div id="new-token" class="hidden"><p class="note"><b>Copy this now.</b> It won't be shown again.</p><code class="token" id="new-token-text"></code><button type="button" class="plain" id="copy-token">Copy</button></div>
-        <div class="msg" id="token-msg" role="status"></div>
-      </form>
-    </section>
-
-    <section class="card">
-      <h2>Account</h2>
-      <form id="name-form" class="row" style="align-items:flex-end">
-        <div><label for="n-name">Name</label><input id="n-name" maxlength="80"></div>
-        <div style="flex:0 0 auto"><button type="submit" class="plain">Save name</button></div>
-      </form>
-      <details><summary>Change password</summary>
-        <form id="pw-form">
-          <label for="p-cur">Current password</label><input id="p-cur" type="password" autocomplete="current-password" required>
-          <label for="p-new">New password</label><input id="p-new" type="password" autocomplete="new-password" minlength="8" required>
-          <button type="submit" class="plain">Change password</button>
-          <p class="note">This signs you out on your other devices.</p>
-        </form>
-      </details>
-      <details><summary>Delete my account</summary>
-        <form id="del-form">
-          <p class="note">This deletes your account, your lists, your saved AI keys and your agent tokens. It can't be undone.</p>
-          <label for="d-pass">Password</label><input id="d-pass" type="password" autocomplete="current-password" required>
-          <button type="submit" class="danger">Delete my account</button>
-        </form>
-      </details>
-      <div class="row">
-        <button class="plain" id="logout">Sign out</button>
-        <button class="plain" id="logout-all">Sign out everywhere</button>
-      </div>
-      <div class="msg" id="acct-msg" role="status"></div>
-    </section>
-  </div>
-</main>
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 const when = t => t ? new Date(t * 1000).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "never";
-let mode = "in", me = null;
+const ago = t => {
+  if (!t) return "never";
+  const s = Date.now() / 1000 - t;
+  if (s < 3600) return "in the last hour";
+  if (s < 86400) return `${Math.floor(s / 3600)} hour${s < 7200 ? "" : "s"} ago`;
+  if (s < 86400 * 14) return `${Math.floor(s / 86400)} day${s < 172800 ? "" : "s"} ago`;
+  return "on " + when(t);
+};
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+let me = null, sessions = null, view = "";
 
 async function api(method, path, body) {
   const r = await fetch(path, { method, credentials: "same-origin",
-    headers: body ? { "Content-Type": "application/json" } : {}, body: body ? JSON.stringify(body) : undefined });
+    headers: body ? { "Content-Type": "application/json" } : { Accept: "application/json" }, body: body ? JSON.stringify(body) : undefined });
   let j = {};
   try { j = await r.json(); } catch {}
-  if (!r.ok) { const e = new Error(j.error || `Error ${r.status}`); e.status = r.status; e.hint = j.hint; throw e; }
+  if (!r.ok) { const e = new Error(j.error || `Something went wrong (error ${r.status})`); e.status = r.status; e.hint = j.hint; throw e; }
   return j;
 }
-function say(id, text, ok) { const el = $(id); el.textContent = text || ""; el.className = "msg " + (ok ? "good" : text ? "bad" : ""); }
-async function busy(btn, fn) { btn.disabled = true; try { await fn(); } finally { btn.disabled = false; } }
+function toast(m) { const t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "status"); t.textContent = m; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); }
+function say(id, text, ok) { const el = $(id); if (!el) return; el.textContent = text || ""; el.className = "msg " + (ok ? "good" : text ? "bad" : ""); }
+async function busy(btn, fn) { if (btn) btn.disabled = true; try { await fn(); } finally { if (btn) btn.disabled = false; } }
+const firstName = u => (u.name || "").trim().split(/\s+/)[0] || u.email.split("@")[0];
+const nameOf = id => (me.providers.find(p => p.id === id) || {}).name || (id.startsWith("search-") ? id.slice(7) + " (search helper)" : id);
 
-function setMode(m) {
-  mode = m;
-  $("#tab-in").setAttribute("aria-selected", m === "in");
-  $("#tab-up").setAttribute("aria-selected", m === "up");
-  $("#out-title").textContent = m === "in" ? "Sign in" : "Create your account";
-  $("#auth-btn").textContent = m === "in" ? "Sign in" : "Create account";
-  $("#name-row").classList.toggle("hidden", m === "in");
-  $("#pass-note").classList.toggle("hidden", m === "in");
-  $("#f-pass").autocomplete = m === "in" ? "current-password" : "new-password";
-  say("#auth-msg", "");
+// A readable name for a signed-in device from its browser's User-Agent.
+function device(ua) {
+  if (!ua) return "Unknown device";
+  const b = /Edg\//.test(ua) ? "Edge" : /SamsungBrowser/.test(ua) ? "Samsung Internet" : /OPR\//.test(ua) ? "Opera" : /Firefox\//.test(ua) ? "Firefox"
+    : /Chrome\//.test(ua) ? "Chrome" : /Safari\//.test(ua) ? "Safari" : "";
+  const o = /iPhone/.test(ua) ? "iPhone" : /iPad/.test(ua) ? "iPad" : /Android/.test(ua) ? "Android" : /CrOS/.test(ua) ? "Chromebook"
+    : /Windows/.test(ua) ? "Windows" : /Macintosh|Mac OS X/.test(ua) ? "Mac" : /Linux/.test(ua) ? "Linux" : "";
+  return b && o ? `${b} on ${o}` : b || o || ua.slice(0, 60);
 }
-$("#tab-in").onclick = () => setMode("in");
-$("#tab-up").onclick = () => setMode("up");
 
-$("#auth-form").onsubmit = e => {
-  e.preventDefault();
-  busy($("#auth-btn"), async () => {
-    try {
-      const body = { email: $("#f-email").value, password: $("#f-pass").value };
-      if (mode === "up") { body.name = $("#f-name").value; body.invite = $("#f-invite").value; }
-      await api("POST", mode === "in" ? "/api/auth/login" : "/api/auth/signup", body);
-      $("#f-pass").value = "";
-      await load();
-    } catch (err) {
-      if (/invite/i.test(err.message)) $("#invite-row").classList.remove("hidden");
-      say("#auth-msg", err.message);
-    }
-  });
+const IC = {
+  lists: '<path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/>',
+  lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  team: '<circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.1a4 4 0 0 1 0 7.8M21 21v-2a4 4 0 0 0-3-3.9"/>',
+  key: '<circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3 21 2M17 6l3 3M14 9l2 2"/>',
+  token: '<path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13.5 6l-3 12"/>',
+  data: '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
 };
+const icon = k => `<span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg></span>`;
+const crumbs = title => `<nav class="crumbs" aria-label="Breadcrumb"><a href="#">Your Account</a><span aria-hidden="true">›</span><span aria-current="page">${esc(title)}</span></nav>`;
 
-function render() {
-  $("#out").classList.toggle("hidden", !!me);
-  $("#in").classList.toggle("hidden", !me);
-  $("#who").innerHTML = me ? `Hello, ${esc(me.user.name || me.user.email)}` : "";
-  if (!me) return;
-  $("#n-name").value = me.user.name || "";
+// ---------- pages ----------
+const PAGES = { security: "Login & security", ai: "Saved AI keys", tokens: "Agent tokens", data: "Your data" };
+
+function hub() {
+  const d = me.data, lists = d.lists || 0, projects = d.projects || 0, searches = d.svc_searches || 0;
+  const keys = me.agents.filter(a => !a.provider.startsWith("search-")).length, helpers = me.agents.length - keys;
+  const tile = (href, ic, title, text, attrs = "") => `<a class="tile" href="${href}" ${attrs}>${icon(ic)}<div><h2>${title}</h2><p>${text}</p></div></a>`;
+  return `<h1>Your Account</h1>
+    <p class="lead">Signed in as <b>${esc(me.user.email)}</b> · member since ${when(me.user.created_at)}</p>
+    <div class="hub">
+      ${tile("#data", "lists", "Your lists", lists || projects || searches
+        ? `<b>${plural(lists, "list", "lists")}</b>${projects ? ` in ${plural(projects, "project", "projects")}` : ""}${searches ? ` · ${plural(searches, "service search", "service searches")}` : ""} saved in your account.`
+        : "Nothing saved yet. Copy the site's lists into your account to start.")}
+      ${tile("#security", "lock", "Login &amp; security", "Edit your name and password, and see the devices you're signed in on.")}
+      ${tile("/hire", "team", "Your AI shoppers", "Hire a cloud or local AI to research products and build your lists.")}
+      ${tile("#ai", "key", "Saved AI keys", keys || helpers ? `<b>${plural(keys, "AI key", "AI keys")}</b>${helpers ? ` and ${plural(helpers, "search key", "search keys")}` : ""} saved, encrypted.` : "Keep your AI key in your account so it works on every device.")}
+      ${tile("#tokens", "token", "Agent tokens", me.tokens.length ? `<b>${plural(me.tokens.length, "token", "tokens")}</b>. Let your own AI agent read or edit your lists.` : "Let your own AI agent read or edit your lists through the API.")}
+      ${tile("#data", "data", "Your data", "Copy the site's lists in, download everything, or close your account.")}
+      ${tile("#settings", "gear", "Settings", "Location, favorite stores, list size and how the site looks.", 'data-settings="1"')}
+    </div>`;
+}
+
+function security() {
+  const u = me.user;
+  const devs = sessions ? sessions.map(s => `<div class="prow"><div class="grow"><div class="k">${esc(device(s.user_agent))}${s.current ? '<span class="tag">This device</span>' : ""}</div>
+      <div class="sm">Signed in ${when(s.created_at)} · last active ${ago(s.last_seen)}</div></div>
+      <button type="button" class="btn plain" data-out-dev="${esc(s.id)}" data-current="${s.current ? 1 : ""}">Sign out</button></div>`).join("")
+    : `<div class="empty">Loading devices…</div>`;
+  return crumbs(PAGES.security) + `<div class="page"><h1>Login &amp; security</h1><p class="lead">Your sign-in details and the devices signed in to your account.</p>
+    <section class="panel">
+      <div class="prow"><div class="grow"><div class="k">Name</div><div class="v">${esc(u.name) || '<span class="sm">Not set</span>'}</div></div>
+        <button type="button" class="btn plain" data-toggle="name-edit">Edit</button></div>
+      <form class="edit" id="name-edit" hidden><label class="f" for="n-name">Your name</label><input class="t" id="n-name" maxlength="80" autocomplete="name" value="${esc(u.name)}">
+        <div class="acts"><button class="btn" type="submit">Save changes</button><button class="btn plain" type="button" data-toggle="name-edit">Cancel</button></div><p class="msg" id="name-msg" role="status"></p></form>
+      <div class="prow"><div class="grow"><div class="k">Email</div><div class="v">${esc(u.email)}</div><div class="sm">You sign in with this email. It can't be changed yet.</div></div></div>
+      <div class="prow"><div class="grow"><div class="k">Password</div><div class="v" aria-label="Password hidden">••••••••</div></div>
+        <button type="button" class="btn plain" data-toggle="pw-edit">Edit</button></div>
+      <form class="edit" id="pw-edit" hidden>
+        <label class="f" for="p-cur">Current password</label><input class="t" id="p-cur" type="password" autocomplete="current-password" required>
+        <label class="f" for="p-new">New password</label><input class="t" id="p-new" type="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters">
+        <label class="f" for="p-new2">Re-enter new password</label><input class="t" id="p-new2" type="password" autocomplete="new-password" required>
+        <div class="acts"><button class="btn" type="submit">Save changes</button><button class="btn plain" type="button" data-toggle="pw-edit">Cancel</button></div>
+        <p class="sm" style="margin:10px 0 0">Changing your password signs you out on every other device.</p><p class="msg" id="pw-msg" role="status"></p></form>
+    </section>
+    <section class="panel">
+      <h2>Signed-in devices</h2><p class="note">Sign out of any device you don't recognize, then change your password.</p>
+      ${devs}
+      <div class="prow"><div class="grow sm">Lost a phone or used a shared computer?</div><button type="button" class="btn danger" id="out-all">Sign out everywhere</button></div>
+      <p class="msg" id="dev-msg" role="status" style="margin:0 18px 14px"></p>
+    </section></div>`;
+}
+
+function ai() {
+  const opts = me.providers.map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");
+  const rows = me.agents.map(a => `<div class="prow"><div class="grow"><div class="k">${esc(nameOf(a.provider))}</div>
+      <div class="sm">Key ending ${esc(a.key_hint)}${a.model ? " · model " + esc(a.model) : ""} · saved ${when(a.updated_at)}</div></div>
+      <button type="button" class="btn plain" data-del-agent="${esc(a.provider)}">Remove</button></div>`).join("");
+  return crumbs(PAGES.ai) + `<div class="page"><h1>Saved AI keys</h1>
+    <p class="lead">Your own AI key, kept in your account so your shoppers work on every device you sign in on. Keys are stored encrypted and never shown again; only the last 4 characters are. Choose which shopper does the work on <a href="/hire">AI shoppers</a>.</p>
+    <section class="panel"><h2>Saved keys</h2>${rows || '<div class="empty">No keys saved yet.</div>'}</section>
+    <section class="panel"><form class="edit" id="agent-form">
+      <h2 style="margin:0 0 4px;font-size:18px">Add or replace a key</h2>
+      ${me.can_save_keys ? "" : '<p class="msg bad">Saving AI keys isn\'t switched on for this site yet.</p>'}
+      <div class="row2">
+        <div><label class="f" for="a-provider">AI provider</label><select class="t" id="a-provider">${opts}</select></div>
+        <div><label class="f" for="a-model">Model <span class="sm">(optional)</span></label><input class="t" id="a-model" placeholder="Leave blank for the default"></div>
+      </div>
+      <label class="f" for="a-key">API key</label><input class="t" id="a-key" type="password" autocomplete="off" spellcheck="false" required>
+      <p class="sm" id="key-link" style="margin:6px 0 0"></p>
+      <div class="acts"><button class="btn" type="submit" ${me.can_save_keys ? "" : "disabled"}>Check and save key</button></div>
+      <p class="msg" id="agent-msg" role="status"></p>
+    </form></section></div>`;
+}
+
+function tokens() {
+  const rows = me.tokens.map(t => `<div class="prow"><div class="grow"><div class="k">${esc(t.name)} <span class="tag grey">${t.scope === "read" ? "Read only" : "Read and edit"}</span></div>
+      <div class="sm">${esc(t.prefix)}… · made ${when(t.created_at)} · last used ${ago(t.last_used)}</div></div>
+      <button type="button" class="btn plain" data-del-token="${esc(t.id)}">Delete</button></div>`).join("");
+  return crumbs(PAGES.tokens) + `<div class="page"><h1>Agent tokens</h1>
+    <p class="lead">Give a token to an AI agent you run yourself so it can read or edit your lists through the WishlistMarket API. Agents can't see your password or change your account.</p>
+    <section class="panel"><h2>Your tokens</h2>${rows || '<div class="empty">No tokens yet.</div>'}</section>
+    <section class="panel"><form class="edit" id="token-form">
+      <h2 style="margin:0 0 4px;font-size:18px">Make a token</h2>
+      <div class="row2">
+        <div><label class="f" for="t-name">Name</label><input class="t" id="t-name" placeholder="e.g. My shopping agent" maxlength="80"></div>
+        <div><label class="f" for="t-scope">Access</label><select class="t" id="t-scope"><option value="write">Read and edit my lists</option><option value="read">Read only</option></select></div>
+      </div>
+      <div class="acts"><button class="btn" type="submit">Make a token</button></div>
+      <div id="new-token" hidden><p class="sm" style="margin:12px 0 0"><b>Copy this now.</b> It won't be shown again.</p><code class="token" id="new-token-text"></code>
+        <div class="acts"><button type="button" class="btn plain" id="copy-token">Copy token</button></div></div>
+      <p class="msg" id="token-msg" role="status"></p>
+    </form>
+    <h2 style="padding-top:14px">How an agent uses it</h2><p class="note">Send the token in the Authorization header. For example, to read your lists:</p>
+    <pre class="ex">curl -H "Authorization: Bearer wm_…" ${esc(location.origin)}/api/data/lists</pre></section></div>`;
+}
+
+function data() {
   const labels = { lists: ["list", "lists"], projects: ["project", "projects"], stores: ["store", "stores"], requests: ["request", "requests"],
     svc_searches: ["service search", "service searches"], svc_providers: ["provider", "providers"],
     svc_projects: ["service project", "service projects"], svc_requests: ["service request", "service requests"] };
   const c = Object.entries(me.data);
-  $("#counts").innerHTML = c.length ? c.map(([k, n]) => `<span>${n} ${esc((labels[k] || [k, k])[n === 1 ? 0 : 1])}</span>`).join("") : `<span>Nothing saved yet</span>`;
-
-  const sel = $("#a-provider"), cur = sel.value;
-  sel.innerHTML = me.providers.map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");
-  if (cur) sel.value = cur;
-  keyLink();
-  $("#agent-form").querySelector("button").disabled = !me.can_save_keys;
-  if (!me.can_save_keys) say("#agent-msg", "Saving AI keys isn't switched on for this site yet.");
-  $("#agents").innerHTML = me.agents.map(a => `<li><div class="grow"><b>${esc(nameOf(a.provider))}</b> key ${esc(a.key_hint)}
-    <div class="small">${a.model ? "Model " + esc(a.model) + " · " : ""}saved ${when(a.updated_at)}</div></div>
-    <button class="plain" data-del-agent="${esc(a.provider)}">Remove</button></li>`).join("");
-  $("#tokens").innerHTML = me.tokens.map(t => `<li><div class="grow"><b>${esc(t.name)}</b> <span class="small">${esc(t.prefix)}…</span>
-    <div class="small">${t.scope === "read" ? "Read only" : "Read and edit"} · made ${when(t.created_at)} · last used ${when(t.last_used)}</div></div>
-    <button class="plain" data-del-token="${esc(t.id)}">Delete</button></li>`).join("");
+  return crumbs(PAGES.data) + `<div class="page"><h1>Your data</h1><p class="lead">What's saved in your account, a copy to keep, and closing your account.</p>
+    <section class="panel"><h2>In your account</h2>
+      <div class="counts">${c.length ? c.map(([k, n]) => `<span>${plural(n, ...(labels[k] || [k, k]))}</span>`).join("") : "<span>Nothing saved yet</span>"}</div>
+      <div class="prow" style="margin-top:12px"><div class="grow"><div class="k">Copy the site's lists</div><div class="sm">Adds WishlistMarket's lists, projects and service searches to your account so you can change or delete them. Lists with the same name are replaced by the site's copy.</div></div>
+        <button type="button" class="btn" id="import-btn">Copy into my account</button></div>
+      <div class="prow"><div class="grow"><div class="k">Download my data</div><div class="sm">Everything in your account as one JSON file.</div></div>
+        <button type="button" class="btn plain" id="export-btn">Download</button></div>
+      <p class="msg" id="data-msg" role="status" style="margin:0 18px 14px"></p>
+    </section>
+    <section class="panel danger-zone"><h2>Close your account</h2>
+      <p class="note">This deletes your account, your lists, your saved AI keys and your agent tokens for good. It can't be undone. Download your data first if you want a copy.</p>
+      <div class="prow"><div class="grow"></div><button type="button" class="btn danger" data-toggle="del-form">Close my account</button></div>
+      <form class="edit" id="del-form" hidden>
+        <label class="f" for="d-pass">Enter your password to confirm</label><input class="t" id="d-pass" type="password" autocomplete="current-password" required>
+        <div class="acts"><button type="submit" class="btn danger solid">Delete my account for good</button><button class="btn plain" type="button" data-toggle="del-form">Cancel</button></div>
+        <p class="msg" id="del-msg" role="status"></p>
+      </form>
+    </section></div>`;
 }
-const nameOf = id => (me.providers.find(p => p.id === id) || {}).name || id;
+
+function render() {
+  view = location.hash.slice(1);
+  if (view === "settings") { history.replaceState(null, "", "#"); view = ""; openSettings(); }
+  const fn = { security, ai, tokens, data }[view] || hub;
+  $("#main").innerHTML = fn();
+  document.title = (PAGES[view] || "Your Account") + " · WishlistMarket";
+  if (view === "ai") keyLink();
+  if (view === "security" && !sessions) loadSessions();
+}
+function rerender() { const y = scrollY; render(); scrollTo(0, y); }
+addEventListener("hashchange", () => { render(); scrollTo(0, 0); $("h1")?.focus?.(); });
+
 function keyLink() {
   const p = me.providers.find(x => x.id === $("#a-provider").value);
   $("#key-link").innerHTML = p?.key_url ? `Get a key at <a href="${esc(p.key_url)}" target="_blank" rel="noopener">${esc(p.key_url.replace(/^https?:\/\//, ""))}</a>` : "";
 }
-$("#a-provider").onchange = keyLink;
+function openSettings() {
+  const go = () => window.WM?.open ? window.WM.open() : toast("Settings are still loading. Try again in a moment.");
+  if (document.readyState === "complete") go(); else addEventListener("load", go, { once: true });
+}
 
 async function load() {
   try { me = await api("GET", "/api/me"); }
-  catch (e) { me = null; if (e.status !== 401) say("#auth-msg", e.message); }
+  catch (e) {
+    if (e.status === 401) { location.replace("/signin?next=" + encodeURIComponent(location.pathname + location.hash)); return; }
+    $("#main").innerHTML = `<div class="panel"><div class="prow"><div class="grow"><div class="k">Couldn't load your account</div><div class="sm">${esc(e.message)}</div></div><button class="btn" onclick="location.reload()">Try again</button></div></div>`;
+    return;
+  }
   render();
 }
-
-$("#agent-form").onsubmit = e => {
-  e.preventDefault();
-  busy(e.submitter || $("#agent-form button"), async () => {
-    try {
-      const provider = $("#a-provider").value;
-      await api("PUT", `/api/me/agents/${encodeURIComponent(provider)}`,
-        { key: $("#a-key").value.trim(), model: $("#a-model").value.trim() || undefined, check: true });
-      $("#a-key").value = "";
-      say("#agent-msg", "Saved. The key works.", true);
-      await load();
-    } catch (err) { say("#agent-msg", err.message + (err.hint ? " " + err.hint : "")); }
-  });
-};
-
-$("#token-form").onsubmit = e => {
-  e.preventDefault();
-  busy(e.submitter || $("#token-form button"), async () => {
-    try {
-      const t = await api("POST", "/api/me/tokens", { name: $("#t-name").value, scope: $("#t-scope").value });
-      $("#new-token-text").textContent = t.token;
-      $("#new-token").classList.remove("hidden");
-      $("#t-name").value = "";
-      say("#token-msg", "");
-      await load();
-    } catch (err) { say("#token-msg", err.message); }
-  });
-};
-$("#copy-token").onclick = async () => {
-  try { await navigator.clipboard.writeText($("#new-token-text").textContent); say("#token-msg", "Copied.", true); }
-  catch { say("#token-msg", "Couldn't copy. Select the token and copy it by hand."); }
-};
-
-document.addEventListener("click", async e => {
-  const a = e.target.closest("[data-del-agent]"), t = e.target.closest("[data-del-token]");
-  try {
-    if (a && confirm(`Remove your saved ${nameOf(a.dataset.delAgent)} key?`)) {
-      await api("DELETE", `/api/me/agents/${encodeURIComponent(a.dataset.delAgent)}`); await load();
-    }
-    if (t && confirm("Delete this token? Any agent using it will stop working.")) {
-      await api("DELETE", `/api/me/tokens/${encodeURIComponent(t.dataset.delToken)}`);
-      $("#new-token").classList.add("hidden"); await load();
-    }
-  } catch (err) { say(a ? "#agent-msg" : "#token-msg", err.message); }
-});
-
-$("#import-btn").onclick = () => busy($("#import-btn"), async () => {
-  try {
-    const has = Object.keys(me.data).length;
-    if (has && !confirm("Copy the site's lists into your account? Lists with the same name will be replaced by the site's copy.")) return;
-    say("#data-msg", "Copying…", true);
-    const data = await (await fetch("/data.json", { cache: "no-cache" })).json();
-    const r = await api("POST", "/api/data/import", data);
-    say("#data-msg", `Copied ${r.imported} items into your account.`, true);
-    await load();
-  } catch (err) { say("#data-msg", err.message); }
-});
-$("#export-btn").onclick = () => busy($("#export-btn"), async () => {
-  try {
-    const data = await api("GET", "/api/data");
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
-    a.download = `wishlistmarket-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  } catch (err) { say("#data-msg", err.message); }
-});
-
-$("#name-form").onsubmit = async e => {
-  e.preventDefault();
-  try { await api("PATCH", "/api/me", { name: $("#n-name").value }); say("#acct-msg", "Name saved.", true); await load(); }
-  catch (err) { say("#acct-msg", err.message); }
-};
-$("#pw-form").onsubmit = async e => {
-  e.preventDefault();
-  try {
-    await api("POST", "/api/me/password", { current: $("#p-cur").value, password: $("#p-new").value });
-    $("#p-cur").value = $("#p-new").value = "";
-    say("#acct-msg", "Password changed.", true);
-  } catch (err) { say("#acct-msg", err.message); }
-};
-$("#del-form").onsubmit = async e => {
-  e.preventDefault();
-  if (!confirm("Delete your account and everything in it? This can't be undone.")) return;
-  try { await api("DELETE", "/api/me", { password: $("#d-pass").value }); me = null; render(); setMode("in"); say("#auth-msg", "Your account was deleted.", true); }
-  catch (err) { say("#acct-msg", err.message); }
-};
-async function logout(all) {
-  try { await api("POST", "/api/auth/logout" + (all ? "?all=1" : "")); } catch {}
-  me = null; render(); setMode("in");
+async function loadSessions() {
+  try { sessions = (await api("GET", "/api/me/sessions")).sessions; } catch (e) { sessions = []; say("#dev-msg", e.message); }
+  if (view === "security") rerender();
 }
-$("#logout").onclick = () => logout(false);
-$("#logout-all").onclick = () => logout(true);
+async function reloadMe() { me = await api("GET", "/api/me"); window.WMAccount?.refresh(); }
 
-if (location.hash === "#signup") setMode("up");
+// ---------- actions ----------
+document.addEventListener("click", async e => {
+  const t = e.target.closest("[data-toggle]");
+  if (t) { const f = $("#" + t.dataset.toggle); f.hidden = !f.hidden; if (!f.hidden) f.querySelector("input")?.focus(); return; }
+  if (e.target.closest("[data-settings]")) { e.preventDefault(); openSettings(); return; }
+  const dev = e.target.closest("[data-out-dev]");
+  if (dev) {
+    const current = !!dev.dataset.current;
+    if (current && !confirm("Sign out of this device?")) return;
+    busy(dev, async () => {
+      try {
+        const r = await api("DELETE", `/api/me/sessions/${encodeURIComponent(dev.dataset.outDev)}`);
+        if (r.signed_out) { location.href = "/signin"; return; }
+        sessions = sessions.filter(s => s.id !== dev.dataset.outDev); rerender(); toast("That device is signed out");
+      } catch (err) { say("#dev-msg", err.message); }
+    });
+    return;
+  }
+  if (e.target.id === "out-all") {
+    if (!confirm("Sign out on every device, including this one?")) return;
+    try { await api("POST", "/api/auth/logout?all=1"); } catch {}
+    location.href = "/signin";
+    return;
+  }
+  const a = e.target.closest("[data-del-agent]");
+  if (a && confirm(`Remove your saved ${nameOf(a.dataset.delAgent)} key?`)) {
+    try { await api("DELETE", `/api/me/agents/${encodeURIComponent(a.dataset.delAgent)}`); await reloadMe(); rerender(); toast("Key removed"); }
+    catch (err) { say("#agent-msg", err.message); }
+    return;
+  }
+  const tk = e.target.closest("[data-del-token]");
+  if (tk && confirm("Delete this token? Any agent using it will stop working.")) {
+    try { await api("DELETE", `/api/me/tokens/${encodeURIComponent(tk.dataset.delToken)}`); await reloadMe(); rerender(); toast("Token deleted"); }
+    catch (err) { say("#token-msg", err.message); }
+    return;
+  }
+  if (e.target.id === "copy-token") {
+    try { await navigator.clipboard.writeText($("#new-token-text").textContent); say("#token-msg", "Copied.", true); }
+    catch { say("#token-msg", "Couldn't copy. Select the token and copy it by hand."); }
+    return;
+  }
+  if (e.target.id === "import-btn") {
+    const btn = e.target;
+    if (Object.keys(me.data).length && !confirm("Copy the site's lists into your account? Lists with the same name will be replaced by the site's copy.")) return;
+    busy(btn, async () => {
+      try {
+        say("#data-msg", "Copying…", true);
+        const d = await (await fetch("/data.json", { cache: "no-cache" })).json();
+        const r = await api("POST", "/api/data/import", d);
+        await reloadMe(); rerender();
+        say("#data-msg", `Copied ${r.imported} items into your account.`, true);
+      } catch (err) { say("#data-msg", err.message); }
+    });
+    return;
+  }
+  if (e.target.id === "export-btn") {
+    busy(e.target, async () => {
+      try {
+        const d = await api("GET", "/api/data");
+        const l = document.createElement("a");
+        l.href = URL.createObjectURL(new Blob([JSON.stringify(d, null, 2)], { type: "application/json" }));
+        l.download = `wishlistmarket-${new Date().toISOString().slice(0, 10)}.json`;
+        l.click();
+        setTimeout(() => URL.revokeObjectURL(l.href), 1000);
+      } catch (err) { say("#data-msg", err.message); }
+    });
+  }
+});
+document.addEventListener("change", e => { if (e.target.id === "a-provider") keyLink(); });
+
+document.addEventListener("submit", e => {
+  const f = e.target, btn = e.submitter || f.querySelector("[type=submit]");
+  if (f.id === "name-edit") {
+    e.preventDefault();
+    busy(btn, async () => {
+      try { await api("PATCH", "/api/me", { name: $("#n-name").value }); await reloadMe(); rerender(); toast("Name saved"); }
+      catch (err) { say("#name-msg", err.message); }
+    });
+  } else if (f.id === "pw-edit") {
+    e.preventDefault();
+    if ($("#p-new").value.length < 8) return say("#pw-msg", "Use at least 8 characters for the new password.");
+    if ($("#p-new").value !== $("#p-new2").value) return say("#pw-msg", "The new passwords don't match.");
+    busy(btn, async () => {
+      try {
+        await api("POST", "/api/me/password", { current: $("#p-cur").value, password: $("#p-new").value });
+        sessions = null; rerender(); toast("Password changed. Your other devices are signed out.");
+      } catch (err) { say("#pw-msg", err.message); }
+    });
+  } else if (f.id === "agent-form") {
+    e.preventDefault();
+    busy(btn, async () => {
+      try {
+        say("#agent-msg", "Checking the key…", true);
+        const provider = $("#a-provider").value;
+        await api("PUT", `/api/me/agents/${encodeURIComponent(provider)}`,
+          { key: $("#a-key").value.trim(), model: $("#a-model").value.trim() || undefined, check: true });
+        await reloadMe(); rerender(); $("#a-provider").value = provider; keyLink();
+        say("#agent-msg", "Saved. The key works.", true);
+      } catch (err) { say("#agent-msg", err.message + (err.hint ? " " + err.hint : "")); }
+    });
+  } else if (f.id === "token-form") {
+    e.preventDefault();
+    busy(btn, async () => {
+      try {
+        const t = await api("POST", "/api/me/tokens", { name: $("#t-name").value, scope: $("#t-scope").value });
+        await reloadMe(); rerender();
+        $("#new-token-text").textContent = t.token;
+        $("#new-token").hidden = false;
+      } catch (err) { say("#token-msg", err.message); }
+    });
+  } else if (f.id === "del-form") {
+    e.preventDefault();
+    if (!confirm("Delete your account and everything in it? This can't be undone.")) return;
+    busy(btn, async () => {
+      try { await api("DELETE", "/api/me", { password: $("#d-pass").value }); location.href = "/?closed=1"; }
+      catch (err) { say("#del-msg", err.message); }
+    });
+  }
+});
+
 load();
 </script>
+<script src="/settings.js" defer></script>
+<script src="/account-menu.js" defer></script>
 </body>
 </html>

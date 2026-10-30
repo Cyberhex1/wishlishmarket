@@ -33,6 +33,14 @@ Or connect the repo in Cloudflare Pages with no build command and build output d
 
 The public lists on the home page come from `public/data.json`, which in this repo holds sample data only.
 
+### Account pages
+
+- **Header menu** (`public/account-menu.js`, loaded on the home page, `/hire` and `/account`): "Hello, sign in / Account & Lists" with a drop-down of the lists and account pages, and Sign out. A page puts `<div data-wm-acct></div>` where the button goes. On phones it is a person icon, and its menu also holds AI shoppers and Settings.
+- **`/signin`** (`public/signin.html`): sign in and create an account (`/signin?new=1`). `?next=/path` brings people back to the page they came from. It asks `GET /api/auth/config` whether sign-ups are open, invite-only or closed.
+- **`/account`** (`public/account.html`): Your Account, with Login & security (name, password, signed-in devices via `GET`/`DELETE /api/me/sessions`), Saved AI keys, Agent tokens, Your data (copy the site's lists in, download, close the account) and Settings. Signed-out visitors are sent to `/signin`.
+- The home page opens `/?view=lists|items|projects|searches|places|sprojects`, `/?q=words` and `/?settings=1` directly.
+- Browser test: `node e2e/accounts.mjs` (set `SHOTS=dir` for screenshots). The test server keeps accounts in an in-memory database (`accounts/fake-d1.js`).
+
 ## AI shoppers (`/hire`)
 
 Users "hire" AI shoppers on `/hire` (`public/hire.html`, `public/shoppers/hire.js`). Every shopper uses the user's own key; there is still no shared key.

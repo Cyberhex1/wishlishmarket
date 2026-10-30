@@ -3,33 +3,11 @@
 import { test, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { DatabaseSync } from "node:sqlite";
+import { fakeD1 } from "./fake-d1.js";
 import { handle, getSessionUser, getUserAgentKey, saveList, isAccountsPath } from "./accounts.js";
 
 // Fake Gemini-shaped key, joined at run time so secret scanners don't flag it.
 const FAKE_KEY = "AIza" + "SyD-test-key-1234567890abcdefghijk";
-
-// Minimal D1 API over node:sqlite: prepare().bind().first/all/run, batch.
-function fakeD1() {
-  const sql = new DatabaseSync(":memory:");
-  sql.exec("PRAGMA foreign_keys = ON");
-  sql.exec(fs.readFileSync(new URL("./schema.sql", import.meta.url), "utf8"));
-  const stmt = (q, args = []) => ({
-    bind: (...a) => stmt(q, a),
-    first: async col => { const r = sql.prepare(q).get(...args); return r ? (col ? r[col] : { ...r }) : null; },
-    all: async () => ({ success: true, results: sql.prepare(q).all(...args).map(r => ({ ...r })), meta: {} }),
-    run: async () => { const r = sql.prepare(q).run(...args); return { success: true, meta: { changes: Number(r.changes) } }; },
-  });
-  return {
-    sql,
-    prepare: q => stmt(q),
-    batch: async list => {
-      sql.exec("BEGIN");
-      try { const out = []; for (const s of list) out.push(await s.run()); sql.exec("COMMIT"); return out; }
-      catch (e) { sql.exec("ROLLBACK"); throw e; }
-    },
-  };
-}
 
 let env;
 beforeEach(() => { env = { DB: fakeD1(), ACCOUNTS_SECRET: "x".repeat(40) }; });
@@ -284,4 +262,41 @@ test("no DB binding gives a clear error", async () => {
   const r = await call("POST", "/api/auth/signup", { body: { email: "a@b.co", password: "correct horse" } });
   assert.equal(r.status, 503);
   assert.match((await r.json()).error, /not set up/);
+});
+
+test("auth config tells the sign-up page what to show", async () => {
+  assert.deepEqual(await (await call("GET", "/api/auth/config")).json(), { signups: "open", accounts: true, can_save_keys: true });
+  env.SIGNUPS = "invite";
+  delete env.ACCOUNTS_SECRET;
+  assert.deepEqual(await (await call("GET", "/api/auth/config")).json(), { signups: "invite", accounts: true, can_save_keys: false });
+  delete env.DB;
+  assert.equal((await (await call("GET", "/api/auth/config")).json()).signups, "closed");
+  assert.equal((await call("POST", "/api/auth/config", { body: {} })).status, 405);
+});
+
+test("signed-in devices can be listed and signed out one by one", async () => {
+  const c1 = await signup();
+  const r = await call("POST", "/api/auth/login", { body: { email: "ann@example.com", password: "correct horse" }, headers: { "User-Agent": "Phone browser" } });
+  const c2 = cookieOf(r);
+  const { sessions } = await (await call("GET", "/api/me/sessions", { cookie: c1 })).json();
+  assert.equal(sessions.length, 2);
+  assert.equal(sessions.filter(s => s.current).length, 1);
+  const phone = sessions.find(s => s.user_agent === "Phone browser");
+  assert.ok(phone && !phone.current && phone.id.length === 16);
+  // Another user can't sign Ann's phone out, and agent tokens can't see devices.
+  const other = await signup("bob@example.com");
+  assert.equal((await call("DELETE", `/api/me/sessions/${phone.id}`, { cookie: other })).status, 404);
+  const { token } = await (await call("POST", "/api/me/tokens", { cookie: c1, body: { name: "bot" } })).json();
+  assert.equal((await call("GET", "/api/me/sessions", { token })).status, 403);
+  const del = await call("DELETE", `/api/me/sessions/${phone.id}`, { cookie: c1 });
+  assert.equal(del.status, 200);
+  assert.equal((await del.json()).signed_out, false);
+  assert.equal((await call("GET", "/api/me", { cookie: c2 })).status, 401);
+  assert.equal((await call("GET", "/api/me", { cookie: c1 })).status, 200);
+  // Signing out this device clears the cookie.
+  const mine = (await (await call("GET", "/api/me/sessions", { cookie: c1 })).json()).sessions[0];
+  const self = await call("DELETE", `/api/me/sessions/${mine.id}`, { cookie: c1 });
+  assert.equal((await self.json()).signed_out, true);
+  assert.match(self.headers.get("Set-Cookie"), /Max-Age=0/);
+  assert.equal((await call("GET", "/api/me", { cookie: c1 })).status, 401);
 });

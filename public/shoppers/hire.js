@@ -506,7 +506,7 @@ async function start() {
   initSuggest();
   drawLocal();
   await Promise.all([loadCatalog(), refreshMe()]);
-  $("#who").innerHTML = me ? `Signed in as ${esc(me.name || me.email)} · <a href="/account">Account</a>` : `<a href="/account">Sign in</a> to keep keys in your account`;
+  if ($("#who")) $("#who").innerHTML = me ? `Signed in as ${esc(me.name || me.email)} · <a href="/account">Account</a>` : `<a href="/account">Sign in</a> to keep keys in your account`;
   adoptOldSetup();
   drawTeam(); drawCloud(); drawHelpers(); drawTry();
 }
